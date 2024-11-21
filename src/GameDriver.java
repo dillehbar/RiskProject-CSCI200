@@ -87,9 +87,13 @@ public class GameDriver {
                     gameDriver.moveToLocation(newLocation);
                     break;
                 case "5":
-                    gameDriver.saveGameState("connections.txt", "descriptions.txt");
+                    gameDriver.saveGameState("connectionsSaved.txt", "descriptionsSaved.txt");
                     break;
                 case "6":
+                    //load from save file
+                    gameLayout.loadFromFile("connectionsSaved.txt", "descriptionsSaved.txt");
+                    return;
+                case "7":
                     System.out.println("Exiting game.");
                     return;
                 default:

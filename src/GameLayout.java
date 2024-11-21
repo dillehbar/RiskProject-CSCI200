@@ -49,8 +49,6 @@ public class GameLayout {
 
             // Add the location and its connections to the map
             connections.put(location, connectedLocations);
-            System.out.println("Added location: " + location + " with connections: " + connectedLocations);
-
             // Skip the empty line between entries
             reader.readLine();
         }
