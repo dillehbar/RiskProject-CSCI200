@@ -1,97 +1,104 @@
-TerritoryA1
+Territory A1
 2
-0
-0
+1
+1
+False
 BLUE
 
-TerritoryA2
+Territory A2
 2
-0
-0
+1
+1
+False
 BLUE
 
-TerritoryA3
+Territory A3
 2
-0
-0
+1
+1
+False
 BLUE
 
-TerritoryB1
+Territory B1
 1
 0
 0
+False
 GRAY
 
-TerritoryB2
+Territory B2
 1
 0
 0
+False
 GRAY
 
-TerritoryB3
+Territory B3
 1
 0
 0
+False
 GRAY
 
-TerritoryC1
+Territory C1
 2
 0
 0
+False
 GRAY
 
-TerritoryC2
+Territory C2
 2
 0
 0
+False
 GRAY
 
-TerritoryC3
+Territory C3
 2
 0
 0
+False
 GRAY
 
-TerritoryD1
+Territory D1
 1
 0
 0
+False
 Gray
 
-TerritoryD2
+Territory D2
 1
 0
 0
+False
 Gray
 
-TerritoryD3
+Territory D3
 1
 0
 0
+False
 Gray
 
-TerritoryE1
+Territory E1
 2
-0
-0
+1
+2
+False
 RED
 
-TerritoryE2
+Territory E2
 2
-0
-0
+1
+2
+False
 RED
 
-TerritoryE3
+Territory E3
 2
-0
-0
+1
+2
+False
 RED
-
---------------------------------
-Territory
-troop spawn rate
-troop count
-ocuppied by
-is capital (Randomly generated for a end row node, adds 3 troops per turn)
-COLOR (in caps so it can be easily read by the program)

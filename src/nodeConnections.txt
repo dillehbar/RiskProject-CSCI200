@@ -64,25 +64,3 @@ Territory C2
 Territory D1
 Territory E2
 Territory D3
-
-Territory D3
-3
-Territory C3
-Territory D2
-Territory E3
-
-Territory E1
-2
-Territory D1
-Territory E2
-
-Territory E2
-3
-Territory D2
-Territory E1
-Territory E3
-
-Territory E3
-2
-Territory D3
-Territory E2
