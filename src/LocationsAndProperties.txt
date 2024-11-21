@@ -1,0 +1,94 @@
+Country 1
+-
+- 2
+- 1
+
+Country 2
+-
+- 2
+- 1
+
+Country 3
+-
+- 2
+- 1
+
+Country 4
+-
+- 2
+- 1
+
+Country 5
+-
+- 1
+- 1
+
+Country 6
+-
+- 1
+- 1
+
+Country 7
+-
+- 1
+- 1
+
+Country 8
+-
+- 2
+- 0
+
+Country 9
+-
+- 2
+- 0
+
+Country 10
+-
+- 2
+- 0
+
+Country 11
+-
+- 1
+- 2
+
+Country 12
+-
+- 1
+- 2
+
+Country 13
+-
+- 1
+- 2
+
+Country 14
+-
+- 2
+- 2
+
+Country 15
+-
+- 2
+- 2
+
+Country 16
+-
+- 2
+- 2
+
+Country 17
+-
+- 2
+- 2
+
+Country 24
+-
+- 5
+- 0
+
+Location
+Number of soldiers there
+Number of soldiers that it gives when a player conquers it
+Int value of who controlls it; 0 if no one, 1 if player 1, 2 if player 2.
