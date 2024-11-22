@@ -1,4 +1,5 @@
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Scanner;
 
@@ -50,16 +51,27 @@ public class GameDriver {
         }
     }
     if (isConnected) {
+        //currentLocation.setNotCurrentNode();
         currentLocation = newLocation;
+        //currentLocation.setCurrentNode();
         System.out.println("Moved to: " + currentLocation);
     } else {
         System.out.println("Invalid move. Location not connected.");
     }
 }
 
-    public void saveGameState(String connectionsFile, String descriptionsFile) throws FileNotFoundException {
-        gameLayout.saveToFile(connectionsFile, descriptionsFile);
-        System.out.println("Game state saved.");
+//    public void saveGameState(String connectionsFile, String descriptionsFile) throws FileNotFoundException {
+//        gameLayout.saveToFile(connectionsFile, descriptionsFile);
+//        System.out.println("Game state saved.");
+//    }
+    public void saveGameState(String filename) throws IOException {
+    gameLayout.saveGameLayout(filename);
+    System.out.println("Game state saved.");
+}
+
+    public static GameDriver loadGameState(String filename, String startingLocation) throws IOException, ClassNotFoundException {
+        GameLayout gameLayout = GameLayout.loadGameLayout(filename);
+        return new GameDriver(gameLayout, startingLocation);
     }
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -71,7 +83,7 @@ public class GameDriver {
             String answer = scanner.nextLine();
 
             if (answer.equals("2")) {
-                gameLayout.loadFromFile("connectionsSaved.txt", "descriptionsSaved.txt");
+                gameLayout.loadFromFile("src/connectionsSaved.txt", "src/descriptionsSaved.txt");
                 /* Not planning on having a true starting location unless needed */
                 gameDriver = new GameDriver(gameLayout, "Territory A1");
                 break;
@@ -109,7 +121,12 @@ public class GameDriver {
                     gameDriver.moveToLocation(newLocation);
                     break;
                 case "5":
-                    gameDriver.saveGameState("connectionsSaved.txt", "descriptionsSaved.txt");
+                    try {
+                        gameDriver.saveGameState("gameState.obj");
+                    } catch (IOException e) {
+                        System.err.println("Error saving game state: " + e.getMessage());
+                    }
+                    //gameDriver.saveGameState("src/connectionsSaved.txt", "src/descriptionsSaved.txt");
                     break;
                 case "6":
                     //search for the capital and save it

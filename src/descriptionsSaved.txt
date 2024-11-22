@@ -2,104 +2,104 @@ Territory A3
 2
 1
 1
-false
+true
 BLUE
 
 Territory E1
 2
 1
 2
-false
+true
 RED
 
 Territory D1
 1
 0
 0
-false
+true
 Gray
 
 Territory E2
 2
 1
 2
-false
+true
 RED
 
 Territory C1
 2
 0
 0
-false
+true
 GRAY
 
 Territory D2
 1
 0
 0
-false
+true
 Gray
 
 Territory E3
 2
 1
 2
-false
+true
 RED
 
 Territory B1
 1
 0
 0
-false
+true
 GRAY
 
 Territory C2
 2
 0
 0
-false
+true
 GRAY
 
 Territory D3
 1
 0
 0
-false
+true
 Gray
 
 Territory A1
 2
 1
 1
-false
+true
 BLUE
 
 Territory B2
 1
 0
 0
-false
+true
 GRAY
 
 Territory C3
 2
 0
 0
-false
+true
 GRAY
 
 Territory A2
 2
 1
 1
-false
+true
 BLUE
 
 Territory B3
 1
 0
 0
-false
+true
 GRAY
 

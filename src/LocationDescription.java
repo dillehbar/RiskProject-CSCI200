@@ -6,7 +6,8 @@ public class LocationDescription {
     private static boolean isCapital;
     private String color;
     private boolean mark;
-    public LocationDescription(String name, int troopSpawnRate, int troopCount, int occupiedBy, boolean isCapital, String color) {
+    //private boolean isCurrentNode;
+    public LocationDescription(String name, int troopSpawnRate, int troopCount, int occupiedBy, boolean isCapital, String color/*, Boolean isCurrentNode*/) {
         this.name = name;
         this.troopSpawnRate = troopSpawnRate;
         this.troopCount = troopCount;
@@ -14,12 +15,21 @@ public class LocationDescription {
         this.isCapital = isCapital;
         this.color = color;
         this.mark = false;
+        //this.isCurrentNode = isCurrentNode;
     }
 
     public String getName() {
         return name;
     }
-
+//    public boolean getIsCurrentNode(){
+//      return isCurrentNode;
+//    }
+//    public void setCurrentNode(){
+//      this.isCurrentNode = true;
+//    }
+//    public void setNotCurrentNode(){
+//      this.isCurrentNode = false;
+//    }
     public int getTroopSpawnRate() {
         return troopSpawnRate;
     }

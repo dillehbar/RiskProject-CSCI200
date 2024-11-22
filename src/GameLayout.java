@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class GameLayout {
+public class GameLayout implements Serializable {
     private HashMap<String, Set<String>> connections;
     private HashMap<String, LocationDescription> descriptions;
 
@@ -79,9 +79,10 @@ public class GameLayout {
             int occupiedBy = Integer.parseInt(scanner.nextLine().trim());
             boolean isCapital = Boolean.parseBoolean(scanner.nextLine().trim());
             String color = scanner.nextLine().trim();
+            //boolean isCurrentNode = Boolean.parseBoolean(scanner.nextLine().trim());
 
             // Add the description to the map
-            descriptions.put(name, new LocationDescription(name, troopSpawnRate, troopCount, occupiedBy, isCapital, color));
+            descriptions.put(name, new LocationDescription(name, troopSpawnRate, troopCount, occupiedBy, isCapital, color/*, isCurrentNode*/));
 
             // Skip the empty line between entries
             if (scanner.hasNextLine()) {
@@ -100,12 +101,11 @@ public class GameLayout {
     }
 
     public Iterator<String> getConnectionsIterator(String location) {
-        if (connections.containsKey(location)) {
-            return connections.get(location).iterator();
-        }
-        return Set.<String>of().iterator();
+    if (connections.containsKey(location)) {
+        return connections.get(location).iterator();
     }
-
+    return null;
+}
     public LocationDescription getLocationDescription(String location) {
         return descriptions.get(location);
     }
@@ -144,6 +144,17 @@ public class GameLayout {
                 writer.println(description.getColor());
                 writer.println();
             }
+        }
+    }
+    public void saveGameLayout(String filename) throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(this);
+        }
+    }
+
+    public static GameLayout loadGameLayout(String filename) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (GameLayout) ois.readObject();
         }
     }
     // create a search method that will breadth first search the graph to find the shortest path between the current location and the p2 capital
