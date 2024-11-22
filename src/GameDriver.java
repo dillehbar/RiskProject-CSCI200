@@ -63,11 +63,31 @@ public class GameDriver {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        GameLayout gameLayout = new GameLayout();
-        gameLayout.loadFromFile("src/nodeConnections.txt", "src/locations.txt");
-        GameDriver gameDriver = new GameDriver(gameLayout, "Territory A1");
-
         Scanner scanner = new Scanner(System.in);
+        GameDriver gameDriver = null;
+        GameLayout gameLayout = new GameLayout();
+        while (true) {
+            System.out.println("Choose an action: \n1. Start New Game\n2. Load Saved Game");
+            String answer = scanner.nextLine();
+
+            if (answer.equals("2")) {
+                gameLayout.loadFromFile("connectionsSaved.txt", "descriptionsSaved.txt");
+                gameLayout.setCapital("Territory A1");
+                gameDriver = new GameDriver(gameLayout, "Territory A1");
+                break;
+            } else if (answer.equals("1")) {
+                int randomNum = (int) (Math.random() * 3) + 1;
+                gameLayout.loadFromFile("src/nodeConnections.txt", "src/locations.txt");
+                gameLayout.setCapital("Territory A" + randomNum);
+                gameDriver = new GameDriver(gameLayout, "Territory A" + randomNum);
+                System.out.println("Starting location: Territory A" + randomNum);
+                break;
+            } else {
+                System.out.println("Invalid input. Please try again.");
+            }
+        }
+
+
         while (true) {
             System.out.println("Choose an action: \n1. List All Locations\n2. List Current Location Properties\n3. list Connected Locations\n4. Move To Location\n5. Save Game State\n6. exit");
             String action = scanner.nextLine();
@@ -89,16 +109,18 @@ public class GameDriver {
                 case "5":
                     gameDriver.saveGameState("connectionsSaved.txt", "descriptionsSaved.txt");
                     break;
+//                case "6":
+//                    //load from save file
+//                    gameLayout.loadFromFile("connectionsSaved.txt", "descriptionsSaved.txt");
+//                    break;
                 case "6":
-                    //load from save file
-                    gameLayout.loadFromFile("connectionsSaved.txt", "descriptionsSaved.txt");
-                    return;
-                case "7":
                     System.out.println("Exiting game.");
+                    scanner.close();
                     return;
                 default:
                     System.out.println("Invalid action.");
             }
         }
+
     }
 }

@@ -15,6 +15,13 @@ public class GameLayout {
         loadConnections(connectionsFile);
     }
 
+    public void setCapital(String location) {
+        for (LocationDescription description : descriptions.values()) {
+            description.setIsCapital(false);
+        }
+        descriptions.get(location).setIsCapital(true);
+    }
+
     private void loadConnections(String connectionsFile) throws FileNotFoundException {
     try (BufferedReader reader = new BufferedReader(new FileReader(connectionsFile))) {
         String line;
@@ -113,9 +120,11 @@ public class GameLayout {
     }
 
     private void saveConnections(String connectionsFile) throws FileNotFoundException {
+        // first print the location, new line then the number of connections, new line then the connections
         try (PrintWriter writer = new PrintWriter(new File(connectionsFile))) {
             for (Map.Entry<String, Set<String>> entry : connections.entrySet()) {
                 writer.println(entry.getKey());
+                writer.println(entry.getValue().size());
                 for (String connectedLocation : entry.getValue()) {
                     writer.println(connectedLocation);
                 }
