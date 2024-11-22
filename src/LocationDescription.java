@@ -1,4 +1,4 @@
-public class LocationDescription {
+public class LocationDescription extends GameLayout {
     private String name;
     private int troopSpawnRate;
     private int troopCount;
@@ -7,6 +7,7 @@ public class LocationDescription {
     private String color;
     private boolean mark;
     //private boolean isCurrentNode;
+    //private static final long serialVersionUID = 1L;
     public LocationDescription(String name, int troopSpawnRate, int troopCount, int occupiedBy, boolean isCapital, String color/*, Boolean isCurrentNode*/) {
         this.name = name;
         this.troopSpawnRate = troopSpawnRate;

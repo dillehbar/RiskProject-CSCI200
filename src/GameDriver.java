@@ -74,7 +74,7 @@ public class GameDriver {
         return new GameDriver(gameLayout, startingLocation);
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         Scanner scanner = new Scanner(System.in);
         GameDriver gameDriver = null;
         GameLayout gameLayout = new GameLayout();
@@ -83,9 +83,10 @@ public class GameDriver {
             String answer = scanner.nextLine();
 
             if (answer.equals("2")) {
-                gameLayout.loadFromFile("src/connectionsSaved.txt", "src/descriptionsSaved.txt");
+                gameDriver = loadGameState("gameState.ser", "Territory A1");
+                //gameLayout.loadFromFile("src/connectionsSaved.txt", "src/descriptionsSaved.txt");
                 /* Not planning on having a true starting location unless needed */
-                gameDriver = new GameDriver(gameLayout, "Territory A1");
+                //gameDriver = new GameDriver(gameLayout, "Territory A1");
                 break;
             } else if (answer.equals("1")) {
                 int randomNum = (int) (Math.random() * 3) + 1;
@@ -122,7 +123,7 @@ public class GameDriver {
                     break;
                 case "5":
                     try {
-                        gameDriver.saveGameState("gameState.obj");
+                        gameDriver.saveGameState("gameState.ser");
                     } catch (IOException e) {
                         System.err.println("Error saving game state: " + e.getMessage());
                     }

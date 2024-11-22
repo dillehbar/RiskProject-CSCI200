@@ -4,6 +4,7 @@ import java.util.*;
 public class GameLayout implements Serializable {
     private HashMap<String, Set<String>> connections;
     private HashMap<String, LocationDescription> descriptions;
+    //private static final long serialVersionUID = 1L;
 
     public GameLayout() {
         connections = new HashMap<>();
@@ -154,7 +155,14 @@ public class GameLayout implements Serializable {
 
     public static GameLayout loadGameLayout(String filename) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
-            return (GameLayout) ois.readObject();
+            GameLayout gameLayout = (GameLayout) ois.readObject();
+            // Debug statement to verify the contents of descriptions
+            System.out.println("Descriptions after loading:");
+            for (Map.Entry<String, LocationDescription> entry : gameLayout.descriptions.entrySet()) {
+                // loop through the descriptions and print the name of the location along wiht all of their attributes
+                System.out.println(entry.getKey() + ": " + entry.getValue().getName() + ", " + entry.getValue().getTroopSpawnRate() + ", " + entry.getValue().getTroopCount() + ", " + entry.getValue().getOccupiedBy() + ", " + entry.getValue().getIsCapital() + ", " + entry.getValue().getColor());
+            }
+            return gameLayout;
         }
     }
     // create a search method that will breadth first search the graph to find the shortest path between the current location and the p2 capital
