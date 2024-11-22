@@ -2,7 +2,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Scanner;
-
+ // TODO FiX File save and load
+ // TODO Add GUI
+// TODO MAYBE GET RID OF RANDOM CAPITALS
 public class GameDriver {
     private GameLayout gameLayout;
     private String currentLocation;

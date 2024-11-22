@@ -1,4 +1,4 @@
-public class LocationDescription extends GameLayout {
+public class LocationDescription implements java.io.Serializable {
     private String name;
     private int troopSpawnRate;
     private int troopCount;

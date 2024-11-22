@@ -17,9 +17,9 @@ public class GameLayout implements Serializable {
     }
 
     public void setCapital(String location) {
-        for (LocationDescription description : descriptions.values()) {
-            description.setIsCapital(false);
-        }
+//        for (LocationDescription description : descriptions.values()) {
+//            description.setIsCapital(false);
+//        }
         descriptions.get(location).setIsCapital(true);
     }
 
