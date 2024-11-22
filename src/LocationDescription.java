@@ -3,9 +3,9 @@ public class LocationDescription {
     private int troopSpawnRate;
     private int troopCount;
     private int occupiedBy;
-    private boolean isCapital;
+    private static boolean isCapital;
     private String color;
-
+    private boolean mark;
     public LocationDescription(String name, int troopSpawnRate, int troopCount, int occupiedBy, boolean isCapital, String color) {
         this.name = name;
         this.troopSpawnRate = troopSpawnRate;
@@ -13,6 +13,7 @@ public class LocationDescription {
         this.occupiedBy = occupiedBy;
         this.isCapital = isCapital;
         this.color = color;
+        this.mark = false;
     }
 
     public String getName() {
@@ -32,6 +33,9 @@ public class LocationDescription {
     }
 
     public boolean getIsCapital() {
+        return isCapital;
+    }
+    public boolean isCapital() {
         return isCapital;
     }
 
@@ -58,6 +62,18 @@ public class LocationDescription {
     }
     public void removeTroopCount(int troopCount) {
         this.troopCount -= troopCount;
+    }
+    public void mark() {
+        this.mark = true;
+    }
+    public void unmark() {
+        this.mark = false;
+    }
+    public void setMark(boolean mark) {
+        this.mark = mark;
+    }
+    public boolean getMark() {
+        return mark;
     }
 }
 

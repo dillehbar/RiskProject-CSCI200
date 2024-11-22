@@ -1,0 +1,105 @@
+Territory A3
+2
+1
+1
+false
+BLUE
+
+Territory E1
+2
+1
+2
+false
+RED
+
+Territory D1
+1
+0
+0
+false
+Gray
+
+Territory E2
+2
+1
+2
+false
+RED
+
+Territory C1
+2
+0
+0
+false
+GRAY
+
+Territory D2
+1
+0
+0
+false
+Gray
+
+Territory E3
+2
+1
+2
+false
+RED
+
+Territory B1
+1
+0
+0
+false
+GRAY
+
+Territory C2
+2
+0
+0
+false
+GRAY
+
+Territory D3
+1
+0
+0
+false
+Gray
+
+Territory A1
+2
+1
+1
+false
+BLUE
+
+Territory B2
+1
+0
+0
+false
+GRAY
+
+Territory C3
+2
+0
+0
+false
+GRAY
+
+Territory A2
+2
+1
+1
+false
+BLUE
+
+Territory B3
+1
+0
+0
+false
+GRAY
+

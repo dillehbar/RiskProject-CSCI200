@@ -1,0 +1,67 @@
+Territory A3
+2
+Territory A2
+Territory B3
+
+Territory D1
+3
+Territory E1
+Territory C1
+Territory D2
+
+Territory C1
+3
+Territory D1
+Territory B1
+Territory C2
+
+Territory D2
+4
+Territory D1
+Territory E2
+Territory C2
+Territory D3
+
+Territory B1
+3
+Territory C1
+Territory A1
+Territory B2
+
+Territory C2
+4
+Territory C1
+Territory D2
+Territory B2
+Territory C3
+
+Territory A1
+2
+Territory B1
+Territory A2
+
+Territory B2
+4
+Territory B1
+Territory C2
+Territory A2
+Territory B3
+
+Territory C3
+3
+Territory C2
+Territory D3
+Territory B3
+
+Territory A2
+3
+Territory A3
+Territory A1
+Territory B2
+
+Territory B3
+3
+Territory A3
+Territory B2
+Territory C3
+

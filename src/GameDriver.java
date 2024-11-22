@@ -72,13 +72,15 @@ public class GameDriver {
 
             if (answer.equals("2")) {
                 gameLayout.loadFromFile("connectionsSaved.txt", "descriptionsSaved.txt");
-                gameLayout.setCapital("Territory A1");
+                /* Not planning on having a true starting location unless needed */
                 gameDriver = new GameDriver(gameLayout, "Territory A1");
                 break;
             } else if (answer.equals("1")) {
                 int randomNum = (int) (Math.random() * 3) + 1;
+                int randomNum2 = (int) (Math.random() * 3) + 1;
                 gameLayout.loadFromFile("src/nodeConnections.txt", "src/locations.txt");
                 gameLayout.setCapital("Territory A" + randomNum);
+                gameLayout.setCapital("Territory E" + randomNum2);
                 gameDriver = new GameDriver(gameLayout, "Territory A" + randomNum);
                 System.out.println("Starting location: Territory A" + randomNum);
                 break;
@@ -89,7 +91,7 @@ public class GameDriver {
 
 
         while (true) {
-            System.out.println("Choose an action: \n1. List All Locations\n2. List Current Location Properties\n3. list Connected Locations\n4. Move To Location\n5. Save Game State\n6. exit");
+            System.out.println("Choose an action: \n1. List All Locations\n2. List Current Location Properties\n3. list Connected Locations\n4. Move To Location\n5. Save Game State\n6. Search for Capital\n7. Exit Game");
             String action = scanner.nextLine();
             switch (action) {
                 case "1":
@@ -109,11 +111,11 @@ public class GameDriver {
                 case "5":
                     gameDriver.saveGameState("connectionsSaved.txt", "descriptionsSaved.txt");
                     break;
-//                case "6":
-//                    //load from save file
-//                    gameLayout.loadFromFile("connectionsSaved.txt", "descriptionsSaved.txt");
-//                    break;
                 case "6":
+                    //search for the capital and save it
+                    gameLayout.search(gameDriver.currentLocation);
+                    break;
+                case "7":
                     System.out.println("Exiting game.");
                     scanner.close();
                     return;

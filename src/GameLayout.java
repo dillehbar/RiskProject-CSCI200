@@ -146,4 +146,61 @@ public class GameLayout {
             }
         }
     }
+    // create a search method that will breadth first search the graph to find the shortest path between the current location and the p2 capital
+    public void search(String currentLocation) {
+        // create a queue to store the locations to be visited
+        Queue<String> queue = new LinkedList<>();
+        // create a set to store the visited locations
+        Set<String> visited = new HashSet<>();
+        // create a map to store the parent of each location
+        Map<String, String> parent = new HashMap<>();
+        // add the current location to the queue and the visited set
+        queue.add(currentLocation);
+        visited.add(currentLocation);
+        // while the queue is not empty
+        while (!queue.isEmpty()) {
+            // remove the first location from the queue
+            String location = queue.remove();
+            // if the location is the capital
+            if (descriptions.get(location).isCapital() && descriptions.get(location).getOccupiedBy() == 2) {
+                // print the path to the capital
+                printPath(parent, location);
+                return;
+            }
+            // for each connected location
+            Set<String> connectedLocations = connections.get(location);
+            if (connectedLocations != null) {
+                for (String connectedLocation : connectedLocations) {
+                    // if the connected location has not been visited
+                    if (!visited.contains(connectedLocation)) {
+                        // add the connected location to the queue and the visited set
+                        queue.add(connectedLocation);
+                        visited.add(connectedLocation);
+                        // set the parent of the connected location to the current location
+                        parent.put(connectedLocation, location);
+                    }
+                }
+            }
+        }
+        // if the capital is not reachable
+        System.out.println("Capital is not reachable from the current location.");
+    }
+    public void printPath(Map<String, String> parent, String location) {
+        // create a list to store the path
+        List<String> path = new ArrayList<>();
+        // add the location to the path
+        path.add(location);
+        // while the location has a parent
+        while (parent.containsKey(location)) {
+            // add the parent to the path
+            location = parent.get(location);
+            path.add(location);
+        }
+        // print the path in reverse order
+        System.out.println("Shortest path to the capital:");
+        for (int i = path.size() - 1; i >= 0; i--) {
+            System.out.println(path.get(i));
+        }
+    }
+
 }
