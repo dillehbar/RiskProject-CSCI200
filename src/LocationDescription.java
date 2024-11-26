@@ -3,7 +3,7 @@ public class LocationDescription implements java.io.Serializable {
     private int troopSpawnRate;
     private int troopCount;
     private int occupiedBy;
-    private static boolean isCapital;
+    private boolean isCapital;
     private String color;
     private boolean mark;
     //private boolean isCurrentNode;

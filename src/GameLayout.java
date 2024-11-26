@@ -4,7 +4,8 @@ import java.util.*;
 public class GameLayout implements Serializable {
     private HashMap<String, Set<String>> connections;
     private HashMap<String, LocationDescription> descriptions;
-    //private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+    // variable to keep track of capital location
 
     public GameLayout() {
         connections = new HashMap<>();
