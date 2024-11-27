@@ -2,21 +2,41 @@ import java.io.*;
 import java.util.*;
 
 public class GameLayout implements Serializable {
+    /**
+     * The connections between the locations
+     */
     private HashMap<String, Set<String>> connections;
+    /**
+     * The descriptions of the locations
+     */
     private HashMap<String, LocationDescription> descriptions;
+    /**
+     * The serial version UID
+     */
     private static final long serialVersionUID = 1L;
-    // variable to keep track of capital location
-
+    /**
+     * Creates a new GameLayout object
+     */
     public GameLayout() {
         connections = new HashMap<>();
         descriptions = new HashMap<>();
     }
 
+    /**
+     * Loads the game layout from a file
+     * @param connectionsFile The name of the file containing the connections
+     * @param descriptionsFile The name of the file containing the descriptions
+     * @throws FileNotFoundException If the file is not found
+     */
     public void loadFromFile(String connectionsFile, String descriptionsFile) throws FileNotFoundException {
         loadDescriptions(descriptionsFile);
         loadConnections(connectionsFile);
     }
 
+    /**
+     * Sets the capital location
+     * @param location The location
+     */
     public void setCapital(String location) {
 //        for (LocationDescription description : descriptions.values()) {
 //            description.setIsCapital(false);
@@ -24,6 +44,11 @@ public class GameLayout implements Serializable {
         descriptions.get(location).setIsCapital(true);
     }
 
+    /**
+     * Loads the connections between the locations from a file
+     * @param connectionsFile The name of the file
+     * @throws FileNotFoundException If the file is not found
+     */
     private void loadConnections(String connectionsFile) throws FileNotFoundException {
     try (BufferedReader reader = new BufferedReader(new FileReader(connectionsFile))) {
         String line;
@@ -68,7 +93,11 @@ public class GameLayout implements Serializable {
     }
 }
 
-
+    /**
+     * Loads the descriptions of the locations from a file
+     * @param descriptionsFile The name of the file
+     * @throws FileNotFoundException If the file is not found
+     */
     private void loadDescriptions(String descriptionsFile) throws FileNotFoundException {
     try (Scanner scanner = new Scanner(new File(descriptionsFile))) {
         while (scanner.hasNextLine()) {
@@ -98,62 +127,89 @@ public class GameLayout implements Serializable {
     }
 }
 
+    /**
+     * Returns an iterator for the locations
+     * @return
+     */
     public Iterator<String> getLocationIterator() {
         return descriptions.keySet().iterator();
     }
 
+    /**
+     * Returns an iterator for the connections of the given location
+     * @param location The location
+     * @return Iterator<String> The iterator for the connections
+     */
     public Iterator<String> getConnectionsIterator(String location) {
     if (connections.containsKey(location)) {
         return connections.get(location).iterator();
     }
     return null;
 }
+
+    /**
+     * Returns the location description for the given location
+     * @param location The location
+     * @return LocationDescription
+     */
     public LocationDescription getLocationDescription(String location) {
         return descriptions.get(location);
     }
 
-    public void updateLocationDescription(String location, LocationDescription newDescription) {
-        descriptions.put(location, newDescription);
-    }
+//    public void updateLocationDescription(String location, LocationDescription newDescription) {
+//        descriptions.put(location, newDescription);
+//    }
+//
+//    public void saveToFile(String connectionsFile, String descriptionsFile) throws FileNotFoundException {
+//        saveConnections(connectionsFile);
+//        saveDescriptions(descriptionsFile);
+//    }
+//
+//    private void saveConnections(String connectionsFile) throws FileNotFoundException {
+//        // first print the location, new line then the number of connections, new line then the connections
+//        try (PrintWriter writer = new PrintWriter(new File(connectionsFile))) {
+//            for (Map.Entry<String, Set<String>> entry : connections.entrySet()) {
+//                writer.println(entry.getKey());
+//                writer.println(entry.getValue().size());
+//                for (String connectedLocation : entry.getValue()) {
+//                    writer.println(connectedLocation);
+//                }
+//                writer.println();
+//            }
+//        }
+//    }
+//
+//    private void saveDescriptions(String descriptionsFile) throws FileNotFoundException {
+//        try (PrintWriter writer = new PrintWriter(new File(descriptionsFile))) {
+//            for (LocationDescription description : descriptions.values()) {
+//                writer.println(description.getName());
+//                writer.println(description.getTroopSpawnRate());
+//                writer.println(description.getTroopCount());
+//                writer.println(description.getOccupiedBy());
+//                writer.println(description.getIsCapital());
+//                writer.println(description.getColor());
+//                writer.println();
+//            }
+//        }
+//    }
 
-    public void saveToFile(String connectionsFile, String descriptionsFile) throws FileNotFoundException {
-        saveConnections(connectionsFile);
-        saveDescriptions(descriptionsFile);
-    }
-
-    private void saveConnections(String connectionsFile) throws FileNotFoundException {
-        // first print the location, new line then the number of connections, new line then the connections
-        try (PrintWriter writer = new PrintWriter(new File(connectionsFile))) {
-            for (Map.Entry<String, Set<String>> entry : connections.entrySet()) {
-                writer.println(entry.getKey());
-                writer.println(entry.getValue().size());
-                for (String connectedLocation : entry.getValue()) {
-                    writer.println(connectedLocation);
-                }
-                writer.println();
-            }
-        }
-    }
-
-    private void saveDescriptions(String descriptionsFile) throws FileNotFoundException {
-        try (PrintWriter writer = new PrintWriter(new File(descriptionsFile))) {
-            for (LocationDescription description : descriptions.values()) {
-                writer.println(description.getName());
-                writer.println(description.getTroopSpawnRate());
-                writer.println(description.getTroopCount());
-                writer.println(description.getOccupiedBy());
-                writer.println(description.getIsCapital());
-                writer.println(description.getColor());
-                writer.println();
-            }
-        }
-    }
+    /**
+     * Saves the game layout to a file
+     * @param filename
+     * @throws IOException
+     */
     public void saveGameLayout(String filename) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
             oos.writeObject(this);
         }
     }
-
+    /**
+     * Loads a game layout from a file
+     * @param filename The name of the file
+     * @return GameLayout The game layout
+     * @throws IOException If an I/O error occurs
+     * @throws ClassNotFoundException If the class of the object in the file cannot be found
+     */
     public static GameLayout loadGameLayout(String filename) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
             GameLayout gameLayout = (GameLayout) ois.readObject();
@@ -166,7 +222,10 @@ public class GameLayout implements Serializable {
             return gameLayout;
         }
     }
-    // create a search method that will breadth first search the graph to find the shortest path between the current location and the p2 capital
+    /**
+     * Searches for the shortest path to the capital from the current location
+     * @param currentLocation The current location
+     */
     public void search(String currentLocation) {
         // create a queue to store the locations to be visited
         Queue<String> queue = new LinkedList<>();
@@ -205,6 +264,12 @@ public class GameLayout implements Serializable {
         // if the capital is not reachable
         System.out.println("Capital is not reachable from the current location.");
     }
+
+    /**
+     * Prints the path to the capital
+     * @param parent The parent of each location
+     * @param location The current location
+     */
     public void printPath(Map<String, String> parent, String location) {
         // create a list to store the path
         List<String> path = new ArrayList<>();
@@ -222,5 +287,39 @@ public class GameLayout implements Serializable {
             System.out.println(path.get(i));
         }
     }
+
+    /**
+     * Counts the total number of troops to spawn for the player
+     * @return int The total number of troops to spawn
+     */
+    public int countAllNewTroops(){
+        int totalTroops = 0;
+        for (LocationDescription description : descriptions.values()) {
+            totalTroops += description.getTroopSpawnRate();
+        }
+        return totalTroops;
+    }
+
+    /**
+     * Updates the troop count for each location
+     * @param location The location
+     * @param troopCount The troop count
+     */
+    public void updateTroopCount(String location, int troopCount) {
+        descriptions.get(location).setTroopCount(troopCount);
+    }
+
+    /**
+     * Updates the occupied by for each location
+     * @param player int for current player
+     */
+    public void returnControlledLocations(int player){
+        for (String location : descriptions.keySet()) {
+            if (descriptions.get(location).getOccupiedBy() == (player)) {
+                System.out.println(location);
+            }
+        }
+    }
+
 
 }

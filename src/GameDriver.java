@@ -75,11 +75,7 @@ public class GameDriver {
         GameLayout gameLayout = GameLayout.loadGameLayout(filename);
         return new GameDriver(gameLayout, startingLocation);
     }
-
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
-        Scanner scanner = new Scanner(System.in);
-        GameDriver gameDriver = null;
-        GameLayout gameLayout = new GameLayout();
+    public GameDriver loadGameInteractions(Scanner scanner, GameDriver gameDriver) throws IOException, ClassNotFoundException {
         while (true) {
             System.out.println("Choose an action: \n1. Start New Game\n2. Load Saved Game");
             String answer = scanner.nextLine();
@@ -103,7 +99,14 @@ public class GameDriver {
                 System.out.println("Invalid input. Please try again.");
             }
         }
+        return gameDriver;
+    }
 
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        Scanner scanner = new Scanner(System.in);
+        GameDriver gameDriver = null;
+        GameLayout gameLayout = new GameLayout();
+        gameDriver = gameDriver.loadGameInteractions(scanner, gameDriver);
 
         while (true) {
             System.out.println("Choose an action: \n1. List All Locations\n2. List Current Location Properties\n3. list Connected Locations\n4. Move To Location\n5. Save Game State\n6. Search for Capital\n7. Exit Game");
