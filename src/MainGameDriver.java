@@ -1,9 +1,7 @@
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Scanner;
-// TODO FiX File save and load
-// TODO Add GUI
-// TODO MAYBE GET RID OF RANDOM CAPITALS
+
 public class MainGameDriver {
     private GameLayout gameLayout;
     private static String selectedLocation;
@@ -163,6 +161,8 @@ public class MainGameDriver {
 
         System.out.println("Capital location: " + selectedLocation);
         gameDriver.listSelectedLocationProperties();
+        // TODO: Finish game logic
+        // TODO: Work on graphics
         while (true){
             /* Game Logic
             Game Begins,
