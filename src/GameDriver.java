@@ -104,10 +104,32 @@ public class GameDriver {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         Scanner scanner = new Scanner(System.in);
-        GameDriver gameDriver = null;
         GameLayout gameLayout = new GameLayout();
-        gameDriver = gameDriver.loadGameInteractions(scanner, gameDriver);
+        GameDriver gameDriver = new GameDriver(gameLayout, "Territory A1");
 
+        while (true) {
+            System.out.println("Choose an action: \n1. Start New Game\n2. Load Saved Game");
+            String answer = scanner.nextLine();
+
+            if (answer.equals("2")) {
+                gameDriver = loadGameState("gameState.ser", "Territory A1");
+                //gameLayout.loadFromFile("src/connectionsSaved.txt", "src/descriptionsSaved.txt");
+                /* Not planning on having a true starting location unless needed */
+                //gameDriver = new GameDriver(gameLayout, "Territory A1");
+                break;
+            } else if (answer.equals("1")) {
+                int randomNum = (int) (Math.random() * 3) + 1;
+                int randomNum2 = (int) (Math.random() * 3) + 1;
+                gameLayout.loadFromFile("src/nodeConnections.txt", "src/locations.txt");
+                gameLayout.setCapital("Territory A" + randomNum);
+                gameLayout.setCapital("Territory E" + randomNum2);
+                gameDriver = new GameDriver(gameLayout, "Territory A" + randomNum);
+                System.out.println("Starting location: Territory A" + randomNum);
+                break;
+            } else {
+                System.out.println("Invalid input. Please try again.");
+            }
+        }
         while (true) {
             System.out.println("Choose an action: \n1. List All Locations\n2. List Current Location Properties\n3. list Connected Locations\n4. Move To Location\n5. Save Game State\n6. Search for Capital\n7. Exit Game");
             String action = scanner.nextLine();

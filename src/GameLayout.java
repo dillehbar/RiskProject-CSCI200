@@ -15,11 +15,20 @@ public class GameLayout implements Serializable {
      */
     private static final long serialVersionUID = 1L;
     /**
+     * The current player turn
+     */
+    private int playerTurn;
+    /**
+     * The game winner
+     */
+    private int gameWinner = 0;
+    /**
      * Creates a new GameLayout object
      */
     public GameLayout() {
         connections = new HashMap<>();
         descriptions = new HashMap<>();
+        playerTurn = 1;
     }
 
     /**
@@ -195,8 +204,8 @@ public class GameLayout implements Serializable {
 
     /**
      * Saves the game layout to a file
-     * @param filename
-     * @throws IOException
+     * @param filename The name of the file
+     * @throws IOException If an I/O error occurs
      */
     public void saveGameLayout(String filename) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
@@ -321,5 +330,44 @@ public class GameLayout implements Serializable {
         }
     }
 
+    /**
+     * Updates the player turn
+     * @param pt int for current player
+     */
+    public void updatePlayerTurn(int pt){
+        playerTurn = pt;
+    }
+
+    /**
+     * Returns the player turn
+     * @return int for current player
+     */
+    public int getPlayerTurn(){
+        return playerTurn;
+    }
+    /**
+     * Returns the game winner
+     * @return int for current player
+     */
+    public int getGameWinner(){
+        return gameWinner;
+    }
+    /**
+     * Updates the game winner
+     * @param winner int for current player
+     */
+    public void setGameWinner(int winner){
+        gameWinner = winner;
+    }
+    /**
+     * Increases turn by 1
+     */
+    public void nextTurn(){
+        if(playerTurn == 4){
+            playerTurn = 1;
+        } else {
+            playerTurn++;
+        }
+    }
 
 }
