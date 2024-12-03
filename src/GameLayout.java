@@ -370,4 +370,61 @@ public class GameLayout implements Serializable {
         }
     }
 
+    public boolean contains(String location) {
+        return descriptions.containsKey(location);
+    }
+
+    public void moveTroopsToLocation(String fromLocation, String toLocation, int troopCount) {
+        LocationDescription from = descriptions.get(fromLocation);
+        LocationDescription to = descriptions.get(toLocation);
+        if (from != null && to != null) {
+            if(to.getOccupiedBy() == from.getOccupiedBy()){
+                descriptions.get(fromLocation).removeTroopCount(troopCount);
+                descriptions.get(toLocation).addTroopCount(troopCount);
+            } else {
+                attackLocation(fromLocation, toLocation, troopCount);
+            }
+        }
+    }
+
+    public void attackLocation(String fromLocation, String toLocation, int playerTroopCount) {
+        LocationDescription from = descriptions.get(fromLocation);
+        LocationDescription to = descriptions.get(toLocation);
+        if (from != null && to != null) {
+            // TODO: ADD RANDOMNESS TO THE BATTLE
+            //get enemy troop count
+            int enemyTroopCount = to.getTroopCount();
+            if(playerTroopCount > enemyTroopCount){
+                //player wins
+                descriptions.get(fromLocation).removeTroopCount(playerTroopCount);
+                // minus 2 to account for the 4 states of turns
+                descriptions.get(toLocation).setOccupiedBy(playerTurn - 2);
+                descriptions.get(toLocation).setTroopCount(playerTroopCount - enemyTroopCount);
+                System.out.println("Player " + (playerTurn - 2) + " won the battle.");
+            } else {
+                //player loses
+                descriptions.get(fromLocation).removeTroopCount(playerTroopCount);
+                descriptions.get(toLocation).setTroopCount(enemyTroopCount - playerTroopCount);
+                System.out.println("Player " + (playerTurn - 2) + " lost the battle.");
+            }
+        }
+    }
+
+    public void printAttackableLocations(int player) {
+        ///  print locations that the player can attack, ie locations that are not occupied by the player, and have connections to the player's locations
+        // print the location, the number of troops, then the locations it can be attacked from it, and the number of troops in those locations
+        for (String location : descriptions.keySet()) {
+            if (descriptions.get(location).getOccupiedBy() != player) {
+                Set<String> connectedLocations = connections.get(location);
+                for (String connectedLocation : connectedLocations) {
+                    if (descriptions.get(connectedLocation).getOccupiedBy() == player) {
+                        System.out.println(location + ": " + descriptions.get(location).getTroopCount() + " troops");
+                        System.out.println("Can be attacked from: " + connectedLocation + " with " + descriptions.get(connectedLocation).getTroopCount() + " troops");
+                    }
+                }
+            }
+        }
+
+    }
+
 }

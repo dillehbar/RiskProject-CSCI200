@@ -100,6 +100,19 @@ public class MainGameDriver {
             }
         }
     }
+    /**
+     * List all locations controlled by a player
+     * @param player the player to list the locations for
+     */
+    public void listControlledLocationsAndTroopCount(int player) {
+        Iterator<String> iterator = gameLayout.getLocationIterator();
+        while (iterator.hasNext()) {
+            LocationDescription description = gameLayout.getLocationDescription(iterator.next());
+            if (description.getOccupiedBy() == player) {
+                System.out.println(description.getName() + " " + description.getTroopCount());
+            }
+        }
+    }
 
     /**
      * Get the selected location
@@ -184,25 +197,97 @@ public class MainGameDriver {
             } else {
                 System.out.println("Player 2's turn");
             }
+            //player 1 place troops
             if(gameLayout.getPlayerTurn() == 1){
-                System.out.println("Player 1's turn");
+                System.out.println("Player 1 Place troops");
                 int placeableTroops = gameLayout.countAllNewTroops();
-                gameDriver.listControlledLocations(1);
+                gameDriver.listControlledLocationsAndTroopCount(1);
                 while(placeableTroops > 0){
+                    System.out.println("Placeable Troops: " + placeableTroops);
                     System.out.println("Choose a location to place troops: ");
                     String location = scanner.nextLine();
+                    if(!gameLayout.contains(location) || gameLayout.getLocationDescription(location).getOccupiedBy() != 1){
+                        System.out.println("Invalid location. Please try again.");
+                        continue;
+                    }
                     System.out.println("Enter the number of troops to place: ");
                     int troops = scanner.nextInt();
+                    scanner.nextLine();
                     if(troops > placeableTroops){
                         System.out.println("Invalid number of troops. Please try again.");
                         continue;
                     }
                     gameLayout.getLocationDescription(location).addTroopCount(troops);
                     placeableTroops -= troops;
+                    gameDriver.listControlledLocationsAndTroopCount(1);
                 }
                 gameLayout.nextTurn();
             }
-
+            //player 2 place troops
+            if(gameLayout.getPlayerTurn() == 2){
+                System.out.println("Player 2 Place troops");
+                int placeableTroops = gameLayout.countAllNewTroops();
+                gameDriver.listControlledLocationsAndTroopCount(2);
+                while(placeableTroops > 0){
+                    System.out.println("Placeable Troops: " + placeableTroops);
+                    System.out.println("Choose a location to place troops: ");
+                    String location = scanner.nextLine();
+                    if(!gameLayout.contains(location) || gameLayout.getLocationDescription(location).getOccupiedBy() != 2){
+                        System.out.println("Invalid location. Please try again.");
+                        continue;
+                    }
+                    System.out.println("Enter the number of troops to place: ");
+                    int troops = scanner.nextInt();
+                    scanner.nextLine();
+                    if(troops > placeableTroops){
+                        System.out.println("Invalid number of troops. Please try again.");
+                        continue;
+                    }
+                    gameLayout.getLocationDescription(location).addTroopCount(troops);
+                    placeableTroops -= troops;
+                    gameDriver.listControlledLocationsAndTroopCount(2);
+                }
+                gameLayout.nextTurn();
+            }
+            /// player 1 move/attack
+            gameLayout.printAttackableLocations(1);
+            // player can only move/attack until they have no more moves or they want to stop
+            while(true){
+                System.out.println("Player 1 Move/Attack");
+                System.out.println("Enter a location to move/attack from: ");
+                String location = scanner.nextLine();
+                if(!gameLayout.contains(location) || gameLayout.getLocationDescription(location).getOccupiedBy() != 1){
+                    System.out.println("Invalid location. Please try again.");
+                    continue;
+                }
+                System.out.println("Enter a location to move/attack to: ");
+                String location2 = scanner.nextLine();
+                if(!gameLayout.contains(location2)){
+                    System.out.println("Invalid location. Please try again.");
+                    continue;
+                }
+                System.out.println("Enter the number of troops to move/attack: ");
+                int troops = scanner.nextInt();
+                scanner.nextLine();
+                if(troops > gameLayout.getLocationDescription(location).getTroopCount()){
+                    System.out.println("Invalid number of troops. Please try again.");
+                    continue;
+                }
+                if(gameLayout.getLocationDescription(location2).getOccupiedBy() == 1){
+                    System.out.println("Invalid location. Please try again.");
+                    continue;
+                }
+                gameLayout.moveTroopsToLocation(location, location2, troops);
+                //gameDriver.listControlledLocationsAndTroopCount(1);
+                gameLayout.printAttackableLocations(1);
+                System.out.println("Enter 1 to move/attack again, 2 to end turn");
+                int choice = scanner.nextInt();
+                scanner.nextLine();
+                if(choice == 2){
+                    break;
+                }
+            }
+            break;
 
         }
 
