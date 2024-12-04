@@ -284,10 +284,49 @@ public class MainGameDriver {
                 int choice = scanner.nextInt();
                 scanner.nextLine();
                 if(choice == 2){
+                    gameLayout.nextTurn();
                     break;
                 }
             }
-            break;
+            // player 2 move/attack
+            gameLayout.printAttackableLocations(2);
+            while(true){
+                System.out.println("Player 2 Move/Attack");
+                System.out.println("Enter a location to move/attack from: ");
+                String location = scanner.nextLine();
+                if(!gameLayout.contains(location) || gameLayout.getLocationDescription(location).getOccupiedBy() != 2){
+                    System.out.println("Invalid location. Please try again.");
+                    continue;
+                }
+                System.out.println("Enter a location to move/attack to: ");
+                String location2 = scanner.nextLine();
+                if(!gameLayout.contains(location2)){
+                    System.out.println("Invalid location. Please try again.");
+                    continue;
+                }
+                System.out.println("Enter the number of troops to move/attack: ");
+                int troops = scanner.nextInt();
+                scanner.nextLine();
+                if(troops > gameLayout.getLocationDescription(location).getTroopCount()){
+                    System.out.println("Invalid number of troops. Please try again.");
+                    continue;
+                }
+                if(gameLayout.getLocationDescription(location2).getOccupiedBy() == 2){
+                    System.out.println("Invalid location. Please try again.");
+                    continue;
+                }
+                gameLayout.moveTroopsToLocation(location, location2, troops);
+                //gameDriver.listControlledLocationsAndTroopCount(2);
+                gameLayout.printAttackableLocations(2);
+                System.out.println("Enter 1 to move/attack again, 2 to end turn");
+                int choice = scanner.nextInt();
+                scanner.nextLine();
+                if(choice == 2){
+                    gameLayout.nextTurn();
+                    break;
+                }
+            }
+
 
         }
 
