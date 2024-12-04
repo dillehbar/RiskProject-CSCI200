@@ -141,7 +141,7 @@ public class MainGameDriver {
         Scanner scanner = new Scanner(System.in);
         GameLayout gameLayout = new GameLayout();
         MainGameDriver gameDriver = new MainGameDriver(gameLayout);
-
+        GUI gui = new GUI(gameLayout);
         while (true) {
             System.out.println("Choose an action: \n1. Start New Game\n2. Load Saved Game");
             String answer = scanner.nextLine();
