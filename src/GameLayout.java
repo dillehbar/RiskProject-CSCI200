@@ -31,6 +31,7 @@ public class GameLayout implements Serializable {
         playerTurn = 1;
     }
 
+
     /**
      * Loads the game layout from a file
      * @param connectionsFile The name of the file containing the connections
@@ -164,6 +165,7 @@ public class GameLayout implements Serializable {
     public LocationDescription getLocationDescription(String location) {
         return descriptions.get(location);
     }
+
 
 //    public void updateLocationDescription(String location, LocationDescription newDescription) {
 //        descriptions.put(location, newDescription);
@@ -427,4 +429,13 @@ public class GameLayout implements Serializable {
 
     }
 
+    public HashMap<String, LocationDescription> getDescriptions() {
+        return descriptions;
+    }
+
+    public void printAllLocations() {
+        for (String location : descriptions.keySet()) {
+            System.out.println(location);
+        }
+    }
 }

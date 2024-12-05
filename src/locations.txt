@@ -73,14 +73,14 @@ Territory D2
 0
 0
 False
-Gray
+GRAY
 
 Territory D3
 1
 0
 0
 False
-Gray
+GRAY
 
 Territory E1
 2

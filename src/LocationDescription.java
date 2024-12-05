@@ -6,8 +6,9 @@ public class LocationDescription implements java.io.Serializable {
     private boolean isCapital;
     private String color;
     private boolean mark;
+    private boolean isSelected;
     //private boolean isCurrentNode;
-    //private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     public LocationDescription(String name, int troopSpawnRate, int troopCount, int occupiedBy, boolean isCapital, String color/*, Boolean isCurrentNode*/) {
         this.name = name;
         this.troopSpawnRate = troopSpawnRate;
@@ -16,6 +17,7 @@ public class LocationDescription implements java.io.Serializable {
         this.isCapital = isCapital;
         this.color = color;
         this.mark = false;
+        this.isSelected = false;
         //this.isCurrentNode = isCurrentNode;
     }
 
@@ -85,6 +87,16 @@ public class LocationDescription implements java.io.Serializable {
     }
     public boolean getMark() {
         return mark;
+    }
+
+    public void select() {
+        this.isSelected = true;
+    }
+    public void unselect() {
+        this.isSelected = false;
+    }
+    public boolean getSelected() {
+        return isSelected;
     }
 }
 
