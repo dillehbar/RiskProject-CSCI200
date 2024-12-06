@@ -438,4 +438,20 @@ public class GameLayout implements Serializable {
             System.out.println(location);
         }
     }
+
+    public String getSelectedLocation() {
+        for (String location : descriptions.keySet()) {
+            if (descriptions.get(location).getSelected()) {
+                return location;
+            }
+        }
+        return null;
+    }
+
+    public void setSelectedLocation(String location) {
+        for (String loc : descriptions.keySet()) {
+            descriptions.get(loc).unselect();
+        }
+        descriptions.get(location).select();
+    }
 }
