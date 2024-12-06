@@ -25,7 +25,8 @@ public class GUI {
     public GUI(GameLayout gameLayout) {
         this.gameLayout = gameLayout;
         frame = new JFrame("Main Game Driver");
-        panel = new JPanel();
+        //panel = new JPanel();
+        panel = new CustomPanel(buttons, gameLayout);
         panel.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
         panel.setLayout(new GridBagLayout()); // Use GridBagLayout
 
@@ -109,11 +110,6 @@ public class GUI {
         }
         // loop through all the location names, and sort them into an array
         createSortedLocations();
-//        panel.removeAll();
-//        panel.revalidate();
-//        panel.repaint();
-//        JLabel label = new JLabel("Game Loaded!");
-//        panel.add(label);
         panel.revalidate();
         panel.repaint();
         GridBagConstraints gbc = new GridBagConstraints();
@@ -122,8 +118,6 @@ public class GUI {
         gbc.gridx = 0;
 
         paintMap(gbc);
-
-
     }
 
     private JButton createImageButton(String imagePath, int width, int height, LocationDescription location) {
@@ -150,7 +144,6 @@ public class GUI {
                 paintMap(new GridBagConstraints());
             }
         });
-
         return button;
     }
     public void saveGameState(String filename) throws IOException {
@@ -185,6 +178,7 @@ public class GUI {
 
         panel.revalidate();
         panel.repaint();
+        paintGameButtons();
         paintSelected(gbc);
 
     }
@@ -208,6 +202,38 @@ public class GUI {
             panel.repaint();
 
         }
+    }
+    private void paintGameButtons(){
+        JButton saveButton = new JButton("Save Game");
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    saveGameState("gameState.ser");
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }
+        });
+        JButton searchForCapital = new JButton("Search for Capital");
+        searchForCapital.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameLayout.search(gameLayout.getSelectedLocation());
+                panel.removeAll();
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.insets = new Insets(10, 10, 10, 10);
+                paintMap(gbc);
+            }
+        });
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        panel.add(saveButton, gbc);
+        gbc.gridx = 1;
+        panel.add(searchForCapital, gbc);
+        panel.revalidate();
+        panel.repaint();
     }
     public Point getButtonLocation(JButton button) {
         return button.getLocation();

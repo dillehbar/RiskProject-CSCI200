@@ -465,4 +465,16 @@ public class GameLayout implements Serializable {
         }
 
     }
+
+    public List<String> getConnections(String location) {
+        List<String> connectedLocations = new ArrayList<>();
+        Set<String> connected = connections.get(location);
+        if (connected != null) {
+            connectedLocations.addAll(connected);
+        }
+        return connectedLocations;
+    }
+
+    public void searchForCapital() {
+    }
 }
