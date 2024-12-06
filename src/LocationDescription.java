@@ -92,7 +92,7 @@ public class LocationDescription implements java.io.Serializable {
     public void select() {
         this.isSelected = true;
     }
-    public void unselect() {
+    public void deselect() {
         this.isSelected = false;
     }
     public boolean getSelected() {

@@ -11,6 +11,10 @@ public class GameDriver {
         this.gameLayout = gameLayout;
     }
 
+    public GameLayout getGameLayout() {
+        return this.gameLayout;
+    }
+
     public void listAllLocations() {
         Iterator<String> iterator = gameLayout.getLocationIterator();
         while (iterator.hasNext()) {

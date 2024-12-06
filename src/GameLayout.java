@@ -402,6 +402,11 @@ public class GameLayout implements Serializable {
                 // minus 2 to account for the 4 states of turns
                 descriptions.get(toLocation).setOccupiedBy(playerTurn - 2);
                 descriptions.get(toLocation).setTroopCount(playerTroopCount - enemyTroopCount);
+                if(playerTurn == 3){
+                    descriptions.get(toLocation).setColor("blue");
+                } else {
+                    descriptions.get(toLocation).setColor("red");
+                }
                 System.out.println("Player " + (playerTurn - 2) + " won the battle.");
             } else {
                 //player loses
@@ -449,9 +454,15 @@ public class GameLayout implements Serializable {
     }
 
     public void setSelectedLocation(String location) {
-        for (String loc : descriptions.keySet()) {
-            descriptions.get(loc).unselect();
+        // TODO: if new location is a valid location to move/attack, then dont set as selected, call attack method.
+        if(descriptions.get(location).getSelected()){
+            descriptions.get(location).deselect();
+        } else {
+            for (String loc : descriptions.keySet()) {
+                descriptions.get(loc).deselect();
+            }
+            descriptions.get(location).select();
         }
-        descriptions.get(location).select();
+
     }
 }

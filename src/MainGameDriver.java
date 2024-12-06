@@ -190,6 +190,7 @@ public class MainGameDriver {
              *
              * if # % 2 is 1 0, then player 1
              */
+            gui.update();
             if(gameLayout.getGameWinner() != 0){
                 System.out.println("Player " + gameLayout.getGameWinner() + " has won!");
                 break;
@@ -222,6 +223,7 @@ public class MainGameDriver {
                     gameLayout.getLocationDescription(location).addTroopCount(troops);
                     placeableTroops -= troops;
                     gameDriver.listControlledLocationsAndTroopCount(1);
+                    gui.update();
                 }
                 gameLayout.nextTurn();
             }
@@ -248,6 +250,7 @@ public class MainGameDriver {
                     gameLayout.getLocationDescription(location).addTroopCount(troops);
                     placeableTroops -= troops;
                     gameDriver.listControlledLocationsAndTroopCount(2);
+                    gui.update();
                 }
                 gameLayout.nextTurn();
             }
@@ -282,6 +285,13 @@ public class MainGameDriver {
                 gameLayout.moveTroopsToLocation(location, location2, troops);
                 //gameDriver.listControlledLocationsAndTroopCount(1);
                 gameLayout.printAttackableLocations(1);
+                gui.update();
+                System.out.println("would you like to test save?");
+                String save = scanner.nextLine();
+                if(save.equals("yes")){
+                    gameDriver.saveGameState("gameState.ser");
+                }
+                // TODO: MAKE NOT BREAKABLE
                 System.out.println("Enter 1 to move/attack again, 2 to end turn");
                 int choice = scanner.nextInt();
                 scanner.nextLine();
@@ -320,6 +330,13 @@ public class MainGameDriver {
                 gameLayout.moveTroopsToLocation(location, location2, troops);
                 //gameDriver.listControlledLocationsAndTroopCount(2);
                 gameLayout.printAttackableLocations(2);
+                gui.update();
+                System.out.println("would you like to test save?");
+                String save = scanner.nextLine();
+                if(save.equals("yes")){
+                    gameDriver.saveGameState("gameState.ser");
+                }
+                // TODO: MAKE NOT BREAKABLE
                 System.out.println("Enter 1 to move/attack again, 2 to end turn");
                 int choice = scanner.nextInt();
                 scanner.nextLine();
