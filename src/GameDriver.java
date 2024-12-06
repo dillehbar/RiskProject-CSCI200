@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class GameDriver {
     private GameLayout gameLayout;
     private static String selectedLocation;
+    private static String currentLocation;
     private static final long serialVersionUID = 1L;
 
     public GameDriver(GameLayout gameLayout) {

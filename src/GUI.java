@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.HashMap;
 
+
 public class GUI {
     private JFrame frame;
     private JPanel panel;
@@ -21,6 +22,7 @@ public class GUI {
     private static final int BUTTON_SIZE = 100;
     private static final int WINDOW_WIDTH = 1000;
     private static final int WINDOW_HEIGHT = 500;
+    GridBagConstraints gbc = new GridBagConstraints();
 
     public GUI(GameLayout gameLayout) {
         this.gameLayout = gameLayout;
@@ -158,12 +160,20 @@ public class GUI {
         gbc.gridx = x;
         gbc.gridy = y;
         panel.removeAll();
+        if(locationNames == null){
+            createSortedLocations();
+        }
         for (String locationName : locationNames) {
 
             JButton button = createImageButton("src/Assets/" + gameLayout.getDescriptions().get(locationName).getColor() + "Node.png", BUTTON_SIZE, BUTTON_SIZE, gameLayout.getDescriptions().get(locationName));
             button.setLayout(new BorderLayout());
             JLabel troopLabel = new JLabel(String.valueOf(gameLayout.getDescriptions().get(locationName).getTroopCount()));
             troopLabel.setFont(new Font("Arial", Font.PLAIN, 24));
+            JLabel locationLabel = new JLabel(locationName);
+            locationLabel.setFont(new Font("Arial", Font.PLAIN, 24));
+            // add it above the troop label
+            //panel.add(locationLabel, gbc);
+            //panel.setComponentZOrder(locationLabel, 0);
             panel.add(troopLabel, gbc);
             panel.setComponentZOrder(troopLabel, 0);
             panel.add(button, gbc);
@@ -226,12 +236,47 @@ public class GUI {
                 paintMap(gbc);
             }
         });
+        JButton printAllLocations = new JButton("Print All Locations");
+        printAllLocations.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameLayout.printAllLocations();
+            }
+        });
+        JButton endTurn = new JButton("End Turn");
+        endTurn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameLayout.nextTurn();
+                panel.removeAll();
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.insets = new Insets(10, 10, 10, 10);
+                paintMap(gbc);
+            }
+        });
+        JButton mainMenu = new JButton("Main Menu");
+        mainMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+                GUI gui = new GUI(gameLayout);
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.insets = new Insets(10, 10, 10, 10);
+
+            }
+        });
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 3;
         panel.add(saveButton, gbc);
         gbc.gridx = 1;
         panel.add(searchForCapital, gbc);
+        gbc.gridx = 2;
+        panel.add(printAllLocations, gbc);
+        gbc.gridx = 3;
+        panel.add(endTurn, gbc);
+        gbc.gridx = 4;
+        panel.add(mainMenu, gbc);
         panel.revalidate();
         panel.repaint();
     }
