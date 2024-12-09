@@ -53,6 +53,14 @@ public class GameLayout implements Serializable {
 //        }
         descriptions.get(location).setIsCapital(true);
     }
+    public String getCapital(int player) {
+        for (String location : descriptions.keySet()) {
+            if (descriptions.get(location).getIsCapital() && descriptions.get(location).getOccupiedBy() == player) {
+                return location;
+            }
+        }
+        return null;
+    }
 
     /**
      * Loads the connections between the locations from a file
@@ -476,5 +484,45 @@ public class GameLayout implements Serializable {
     }
 
     public void searchForCapital() {
+    }
+
+    public int getRealPlayerTurn() {
+        if(playerTurn%2 == 0){
+            return 2;
+        } else {
+            return 1;
+        }
+    }
+
+    /**
+     * retrun if the move is valid from the current location
+     * @param name the name of the location to move to
+     * @return boolean if the move is valid
+     */
+    public boolean isValidMove(String name) {
+        if(GameDriver.getPlayer1Location() == null){
+            GameDriver.setPlayer1Location(getCapital(1));
+        }
+        if(GameDriver.getPlayer2Location() == null){
+            GameDriver.setPlayer2Location(getCapital(2));
+        }
+        if(getSelectedLocation() == null) {
+            if (getRealPlayerTurn() == 1) {
+                setSelectedLocation(GameDriver.getPlayer1Location());
+            } else {
+                setSelectedLocation(GameDriver.getPlayer2Location());
+            }
+        }
+        Iterator<String> iterator = getConnectionsIterator(getSelectedLocation());
+        while (iterator.hasNext()) {
+            String location = iterator.next();
+            if (location.equals(name)) {
+                if(descriptions.get(name).getOccupiedBy() == getRealPlayerTurn()){
+                    return true;
+                }
+                return true;
+            }
+        }
+        return false;
     }
 }

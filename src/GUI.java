@@ -21,19 +21,24 @@ public class GUI {
     private HashMap<String, JButton> buttons = new HashMap<>();
     private static final int BUTTON_SIZE = 100;
     private static final int WINDOW_WIDTH = 1000;
-    private static final int WINDOW_HEIGHT = 500;
+    private static final int WINDOW_HEIGHT = 700;
     GridBagConstraints gbc = new GridBagConstraints();
+    private JLabel playerTurnLabel;
+    private Font largerFont;
+    private static Boolean showTurn;
 
     public GUI(GameLayout gameLayout) {
+        showTurn = false;
         this.gameLayout = gameLayout;
         frame = new JFrame("Main Game Driver");
+        frame.setResizable(false);
         //panel = new JPanel();
         panel = new CustomPanel(buttons, gameLayout);
         panel.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
         panel.setLayout(new GridBagLayout()); // Use GridBagLayout
 
         // Create a larger font
-        Font largerFont = new Font("Arial", Font.PLAIN, 24);
+        largerFont = new Font("Arial", Font.PLAIN, 24);
 
         label = new JLabel("Main Game Driver");
         label.setFont(largerFont); // Set the larger font for the label
@@ -69,22 +74,36 @@ public class GUI {
         GUI gui = new GUI(gameLayout);
     }
 
-   public void startNewGame()  {
+    public static int getScreenX() {
+        return WINDOW_WIDTH;
+    }
+    public static int getScreenY() {
+        return WINDOW_HEIGHT;
+    }
+
+    public static boolean showTurn() {
+        return showTurn;
+    }
+
+    public void startNewGame()  {
     panel.removeAll();
     panel.revalidate();
     panel.repaint();
-
-
     System.out.println("Game started!");
+    showTurn = true;
     try {
-        gameLayout.loadFromFile("src/nodeConnections.txt", "src/locations.txt");
+        gameLayout.loadFromFile("src/nodeConnectionsSTRAIGHTMAP.txt", "src/locations.txt");
     } catch (FileNotFoundException e) {
         e.printStackTrace();
     }
        createSortedLocations();
+        GameDriver.newGame(gameLayout);
        GridBagConstraints gbc = new GridBagConstraints();
        gbc.insets = new Insets(10, 10, 10, 10);
+       //paintPlayerTurn();
        paintMap(gbc);
+       gameLayout.setSelectedLocation(gameLayout.getCapital(1));
+       paintSelected();
    }
 
     private void createSortedLocations() {
@@ -96,7 +115,7 @@ public class GUI {
             i++;
         }
         Arrays.sort(locationNames);
-        System.out.println(Arrays.toString(locationNames));
+        //System.out.println(Arrays.toString(locationNames));
     }
 
 
@@ -110,6 +129,7 @@ public class GUI {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+        showTurn = true;
         // loop through all the location names, and sort them into an array
         createSortedLocations();
         panel.revalidate();
@@ -120,6 +140,7 @@ public class GUI {
         gbc.gridx = 0;
 
         paintMap(gbc);
+        update();
     }
 
     private JButton createImageButton(String imagePath, int width, int height, LocationDescription location) {
@@ -141,7 +162,9 @@ public class GUI {
             public void actionPerformed(ActionEvent e) {
                 LocationDescription loc = (LocationDescription) button.getClientProperty("location");
                 System.out.println("Button clicked: " + loc.getName());
-                gameLayout.setSelectedLocation(loc.getName());
+                if(gameLayout.isValidMove(loc.getName())){
+                    gameLayout.setSelectedLocation(loc.getName());
+                }
                 panel.removeAll();
                 paintMap(new GridBagConstraints());
             }
@@ -152,9 +175,15 @@ public class GUI {
         gameLayout.saveGameLayout(filename);
         System.out.println("Game state saved.");
     }
+    private void paintPlayerTurn() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        playerTurnLabel = new JLabel("Player " + gameLayout.getPlayerTurn() + "'s turn");
+        playerTurnLabel.setFont(largerFont);
+        panel.add(playerTurnLabel, gbc);
+        gbc.gridy++;
+    }
 
     private void paintMap(GridBagConstraints gbc) {
-
         int x = 0;
         int y = 0;
         gbc.gridx = x;
@@ -163,7 +192,7 @@ public class GUI {
         if(locationNames == null){
             createSortedLocations();
         }
-        for (String locationName : locationNames) {
+        for (String locationName : gameLayout.getDescriptions().keySet() /*locationNames*/) {
 
             JButton button = createImageButton("src/Assets/" + gameLayout.getDescriptions().get(locationName).getColor() + "Node.png", BUTTON_SIZE, BUTTON_SIZE, gameLayout.getDescriptions().get(locationName));
             button.setLayout(new BorderLayout());
@@ -189,11 +218,10 @@ public class GUI {
         panel.revalidate();
         panel.repaint();
         paintGameButtons();
-        paintSelected(gbc);
-
+        paintSelected();
     }
 
-    private void paintSelected(GridBagConstraints gbc) {
+    private void paintSelected() {
 
         if(gameLayout.getSelectedLocation() != null){
             JButton tempButton = buttons.get(gameLayout.getSelectedLocation());
@@ -201,17 +229,41 @@ public class GUI {
             GridBagConstraints originalGbc = layout.getConstraints(tempButton);
             tempButton = createImageButton("src/Assets/Selected"+gameLayout.getDescriptions().get(gameLayout.getSelectedLocation()).getColor()+"Node.png", BUTTON_SIZE, BUTTON_SIZE, gameLayout.getDescriptions().get(gameLayout.getSelectedLocation()));
             System.out.println("src/Assets/Selected"+gameLayout.getDescriptions().get(gameLayout.getSelectedLocation()).getColor()+"Node.png");
-            // add the button on top of the existing button at the x and y coordinates
             panel.add(tempButton, originalGbc);
             JLabel troopLabel = new JLabel(String.valueOf(gameLayout.getDescriptions().get(gameLayout.getSelectedLocation()).getTroopCount()));
             troopLabel.setFont(new Font("Arial", Font.PLAIN, 24));
             panel.add(troopLabel, originalGbc);
             panel.setComponentZOrder(troopLabel, 0);
             panel.setComponentZOrder(tempButton, 1);
+
+            JButton button = buttons.get(gameLayout.getSelectedLocation());
+            LocationDescription location = gameLayout.getDescriptions().get(gameLayout.getSelectedLocation());
+            if (location.getOccupiedBy() == gameLayout.getRealPlayerTurn()) {
+                for (String connectedLocation : gameLayout.getConnections(gameLayout.getSelectedLocation())) {
+                    JButton connectedButton = buttons.get(connectedLocation);
+                    if (connectedButton != null) {
+                        JButton connectionButton = createImageButton("src/Assets/Valid" + gameLayout.getDescriptions().get(connectedLocation).getColor() + "Node.png", BUTTON_SIZE, BUTTON_SIZE, gameLayout.getDescriptions().get(connectedLocation));
+                        GridBagLayout layout1 = (GridBagLayout) panel.getLayout();
+                        GridBagConstraints originalGbc1 = layout1.getConstraints(connectedButton);
+                        panel.add(connectionButton, originalGbc1);
+                        JLabel troopLabel1 = new JLabel(String.valueOf(gameLayout.getDescriptions().get(connectedLocation).getTroopCount()));
+                        troopLabel1.setFont(new Font("Arial", Font.PLAIN, 24));
+                        panel.add(troopLabel1, originalGbc1);
+                        panel.setComponentZOrder(troopLabel1, 0);
+                        panel.setComponentZOrder(connectionButton, 1);
+                    }
+                }
+            }
+
+
             panel.revalidate();
             panel.repaint();
 
         }
+
+        // paint all valid connections with an image button using the ValidCOLORNode.png
+
+
     }
     private void paintGameButtons(){
         JButton saveButton = new JButton("Save Game");

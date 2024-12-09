@@ -5,11 +5,25 @@ import java.util.Scanner;
 public class GameDriver {
     private GameLayout gameLayout;
     private static String selectedLocation;
-    private static String currentLocation;
+    private static String player1Location;
+    private static String player2Location;
     private static final long serialVersionUID = 1L;
 
     public GameDriver(GameLayout gameLayout) {
         this.gameLayout = gameLayout;
+    }
+
+    public static void newGame(GameLayout gameLayout) {
+        int randomNum = (int) (Math.random() * 3) + 1;
+        int randomNum2 = (int) (Math.random() * 3) + 1;
+        gameLayout.setCapital("Territory A" + randomNum);
+        gameLayout.setCapital("Territory A" + randomNum);
+        gameLayout.getLocationDescription("Territory A" + randomNum).addTroopCount(5);
+        setSelectedLocation("Territory A" + randomNum);
+        setPlayer1Location("Territory A" + randomNum);
+        gameLayout.setCapital("Territory E" + randomNum2);
+        gameLayout.getLocationDescription("Territory E" + randomNum2).addTroopCount(5);
+        System.out.println("Game started.");
     }
 
     public GameLayout getGameLayout() {
@@ -141,7 +155,21 @@ public class GameDriver {
 //        }
 //        return total;
 //    }
-
+    public static void setPlayer1Location(String location) {
+        player1Location = location;
+    }
+    public static void setPlayer2Location(String location) {
+        player2Location = location;
+    }
+    public static String getPlayer1Location() {
+        return player1Location;
+    }
+    public static String getPlayer2Location() {
+        return player2Location;
+    }
+    public static String getSelectedLocation() {
+        return selectedLocation;
+    }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         Scanner scanner = new Scanner(System.in);

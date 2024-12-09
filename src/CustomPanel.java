@@ -27,10 +27,23 @@ public class CustomPanel extends JPanel {
                 JButton connectedButton = buttons.get(connectedLocation);
                 if (connectedButton != null) {
                     Point p2 = connectedButton.getLocation();
-                    g2d.drawLine(p1.x + button.getWidth() / 2, p1.y + button.getHeight() / 2,
-                            p2.x + connectedButton.getWidth() / 2, p2.y + connectedButton.getHeight() / 2);
+                    g2d.drawLine(p1.x + button.getWidth() / 2, p1.y + button.getHeight() / 2,p2.x + connectedButton.getWidth() / 2, p2.y + connectedButton.getHeight() / 2);
                 }
             }
         }
+
+        // draw the labels above the buttons
+        for (String location : buttons.keySet()) {
+            JButton button = buttons.get(location);
+            Point p = button.getLocation();
+            g2d.drawString(location, p.x + button.getWidth() / 4, p.y );
+        }
+
+      // set custom font and print player turn
+        if (GUI.showTurn()){
+            g2d.setFont(new Font("Arial", Font.BOLD, 25));
+            g2d.drawString("Player " + gameLayout.getRealPlayerTurn() + "'s Turn", (GUI.getScreenX() / 2) - 80, 50);
+        }
+
     }
 }
