@@ -203,7 +203,7 @@ public class MainGameDriver {
             //player 1 place troops
             if(gameLayout.getPlayerTurn() == 1){
                 System.out.println("Player 1 Place troops");
-                int placeableTroops = gameLayout.countAllNewTroops();
+                int placeableTroops = gameLayout.countAllNewTroops(1);
                 gameDriver.listControlledLocationsAndTroopCount(1);
                 while(placeableTroops > 0){
                     System.out.println("Placeable Troops: " + placeableTroops);
@@ -230,7 +230,7 @@ public class MainGameDriver {
             //player 2 place troops
             if(gameLayout.getPlayerTurn() == 2){
                 System.out.println("Player 2 Place troops");
-                int placeableTroops = gameLayout.countAllNewTroops();
+                int placeableTroops = gameLayout.countAllNewTroops(2);
                 gameDriver.listControlledLocationsAndTroopCount(2);
                 while(placeableTroops > 0){
                     System.out.println("Placeable Troops: " + placeableTroops);

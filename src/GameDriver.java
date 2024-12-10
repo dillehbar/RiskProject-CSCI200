@@ -1,8 +1,9 @@
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Scanner;
 
-public class GameDriver {
+public class GameDriver implements Serializable {
     private GameLayout gameLayout;
     private static String selectedLocation;
     private static String player1Location;
@@ -19,11 +20,28 @@ public class GameDriver {
         gameLayout.setCapital("Territory A" + randomNum);
         gameLayout.setCapital("Territory A" + randomNum);
         gameLayout.getLocationDescription("Territory A" + randomNum).addTroopCount(5);
+        gameLayout.getLocationDescription("Territory A" + randomNum).addTroopSpawnRate(3);
         setSelectedLocation("Territory A" + randomNum);
         setPlayer1Location("Territory A" + randomNum);
         gameLayout.setCapital("Territory E" + randomNum2);
         gameLayout.getLocationDescription("Territory E" + randomNum2).addTroopCount(5);
+        gameLayout.getLocationDescription("Territory E" + randomNum2).addTroopSpawnRate(3);
         System.out.println("Game started.");
+    }
+
+    public static void setPlayerLocation(GameLayout gameLayout, String capital) {
+        if(gameLayout.getRealPlayerTurn() == 1){
+            setPlayer1Location(capital);
+        } else {
+            setPlayer2Location(capital);
+        }
+    }
+    public static String getPlayerLocation(GameLayout gameLayout, int player) {
+        if(player == 1){
+            return player1Location;
+        } else {
+            return player2Location;
+        }
     }
 
     public GameLayout getGameLayout() {
@@ -176,9 +194,6 @@ public class GameDriver {
         GameLayout gameLayout = new GameLayout();
         GameDriver gameDriver = new GameDriver(gameLayout);
         GUI gui = new GUI(gameLayout);
-
-
-
     }
 
 }

@@ -1,15 +1,20 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
-public class CustomPanel extends JPanel {
+public class CustomPanel extends JPanel implements Serializable {
     private HashMap<String, JButton> buttons;
     private GameLayout gameLayout;
+    private boolean shownPanel = false;
 
     public CustomPanel(HashMap<String, JButton> buttons, GameLayout gameLayout) {
         this.buttons = buttons;
         this.gameLayout = gameLayout;
+    }
+    public void updateButtons(HashMap<String, JButton> buttons) {
+        this.buttons = buttons;
     }
 
     @Override
@@ -41,8 +46,24 @@ public class CustomPanel extends JPanel {
 
       // set custom font and print player turn
         if (GUI.showTurn()){
-            g2d.setFont(new Font("Arial", Font.BOLD, 25));
-            g2d.drawString("Player " + gameLayout.getRealPlayerTurn() + "'s Turn", (GUI.getScreenX() / 2) - 80, 50);
+            if(gameLayout.checkGameWinner()){
+                g2d.setFont(new Font("Arial", Font.BOLD, 25));
+                g2d.drawString("Player " + gameLayout.getGameWinner() + " Wins!", (GUI.getScreenX() / 2) - 80, 50);
+
+                while(!shownPanel){
+                    GUI.gameWinnerPanel(gameLayout);
+                    shownPanel = true;
+                }
+            } else {
+                g2d.setFont(new Font("Arial", Font.BOLD, 25));
+                g2d.drawString("Player " + gameLayout.getRealPlayerTurn() + "'s Turn", (GUI.getScreenX() / 2) - 80, 50);
+                if(gameLayout.getPlayerTurn() <= 2){
+                    g2d.drawString("Troops to place: " + gameLayout.getTroopsToPlace(), (GUI.getScreenX() / 2) - 80, 80);
+                } else  {
+                    g2d.drawString("Move/Attack Phase", (GUI.getScreenX() / 2) - 120, 80);
+                }
+            }
+
         }
 
     }

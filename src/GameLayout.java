@@ -22,6 +22,7 @@ public class GameLayout implements Serializable {
      * The game winner
      */
     private int gameWinner = 0;
+    private int troopsToPlace = 0;
     /**
      * Creates a new GameLayout object
      */
@@ -175,43 +176,6 @@ public class GameLayout implements Serializable {
     }
 
 
-//    public void updateLocationDescription(String location, LocationDescription newDescription) {
-//        descriptions.put(location, newDescription);
-//    }
-//
-//    public void saveToFile(String connectionsFile, String descriptionsFile) throws FileNotFoundException {
-//        saveConnections(connectionsFile);
-//        saveDescriptions(descriptionsFile);
-//    }
-//
-//    private void saveConnections(String connectionsFile) throws FileNotFoundException {
-//        // first print the location, new line then the number of connections, new line then the connections
-//        try (PrintWriter writer = new PrintWriter(new File(connectionsFile))) {
-//            for (Map.Entry<String, Set<String>> entry : connections.entrySet()) {
-//                writer.println(entry.getKey());
-//                writer.println(entry.getValue().size());
-//                for (String connectedLocation : entry.getValue()) {
-//                    writer.println(connectedLocation);
-//                }
-//                writer.println();
-//            }
-//        }
-//    }
-//
-//    private void saveDescriptions(String descriptionsFile) throws FileNotFoundException {
-//        try (PrintWriter writer = new PrintWriter(new File(descriptionsFile))) {
-//            for (LocationDescription description : descriptions.values()) {
-//                writer.println(description.getName());
-//                writer.println(description.getTroopSpawnRate());
-//                writer.println(description.getTroopCount());
-//                writer.println(description.getOccupiedBy());
-//                writer.println(description.getIsCapital());
-//                writer.println(description.getColor());
-//                writer.println();
-//            }
-//        }
-//    }
-
     /**
      * Saves the game layout to a file
      * @param filename The name of the file
@@ -260,7 +224,13 @@ public class GameLayout implements Serializable {
             // remove the first location from the queue
             String location = queue.remove();
             // if the location is the capital
-            if (descriptions.get(location).isCapital() && descriptions.get(location).getOccupiedBy() == 2) {
+            int player;
+            if(getRealPlayerTurn() == 1){
+                player = 2;
+            } else {
+                player = 1;
+            }
+            if (descriptions.get(location).isCapital() && descriptions.get(location).getOccupiedBy() == player) {
                 // print the path to the capital
                 printPath(parent, location);
                 return;
@@ -300,6 +270,7 @@ public class GameLayout implements Serializable {
             location = parent.get(location);
             path.add(location);
         }
+        GUI.createPathPanel(path);
         // print the path in reverse order
         System.out.println("Shortest path to the capital:");
         for (int i = path.size() - 1; i >= 0; i--) {
@@ -311,10 +282,12 @@ public class GameLayout implements Serializable {
      * Counts the total number of troops to spawn for the player
      * @return int The total number of troops to spawn
      */
-    public int countAllNewTroops(){
+    public int countAllNewTroops(int player){
         int totalTroops = 0;
         for (LocationDescription description : descriptions.values()) {
-            totalTroops += description.getTroopSpawnRate();
+            if(description.getOccupiedBy() == player){
+                totalTroops += description.getTroopSpawnRate();
+            }
         }
         return totalTroops;
     }
@@ -370,6 +343,33 @@ public class GameLayout implements Serializable {
         gameWinner = winner;
     }
     /**
+     * Checks if the game is over
+     * @return boolean if the game is over
+     */
+    public boolean checkGameWinner(){
+        boolean player1ControlsAll = true;
+        boolean player2ControlsAll = true;
+
+        for (LocationDescription description : descriptions.values()) {
+            if (description.getOccupiedBy() != 1) {
+                player1ControlsAll = false;
+            }
+            if (description.getOccupiedBy() != 2) {
+                player2ControlsAll = false;
+            }
+        }
+
+        if (player1ControlsAll) {
+            setGameWinner(1);
+            return true;
+        } else if (player2ControlsAll) {
+            setGameWinner(2);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    /**
      * Increases turn by 1
      */
     public void nextTurn(){
@@ -397,30 +397,113 @@ public class GameLayout implements Serializable {
         }
     }
 
+//    public void attackLocation(String fromLocation, String toLocation, int playerTroopCount) {
+//        LocationDescription from = descriptions.get(fromLocation);
+//        LocationDescription to = descriptions.get(toLocation);
+//        if (from != null && to != null) {
+//            // TODO: ADD RANDOMNESS TO THE BATTLE
+//            //get enemy troop count
+//            int enemyTroopCount = to.getTroopCount();
+//            if(playerTroopCount > enemyTroopCount){
+//                //player wins
+//                descriptions.get(fromLocation).removeTroopCount(playerTroopCount);
+//                // minus 2 to account for the 4 states of turns
+//                descriptions.get(toLocation).setOccupiedBy(playerTurn - 2);
+//                descriptions.get(toLocation).setTroopCount(playerTroopCount - enemyTroopCount);
+//                if(playerTurn == 3){
+//                    descriptions.get(toLocation).setColor("blue");
+//                } else {
+//                    descriptions.get(toLocation).setColor("red");
+//                }
+//                System.out.println("Player " + (playerTurn - 2) + " won the battle.");
+//            } else {
+//                //player loses
+//                descriptions.get(fromLocation).removeTroopCount(playerTroopCount);
+//                descriptions.get(toLocation).setTroopCount(enemyTroopCount - playerTroopCount);
+//                System.out.println("Player " + (playerTurn - 2) + " lost the battle.");
+//            }
+//        }
+//    }
+
     public void attackLocation(String fromLocation, String toLocation, int playerTroopCount) {
-        LocationDescription from = descriptions.get(fromLocation);
+        LocationDescription current = descriptions.get(fromLocation);
         LocationDescription to = descriptions.get(toLocation);
-        if (from != null && to != null) {
-            // TODO: ADD RANDOMNESS TO THE BATTLE
-            //get enemy troop count
-            int enemyTroopCount = to.getTroopCount();
-            if(playerTroopCount > enemyTroopCount){
-                //player wins
+        Random random = new Random();
+        String result;
+        if (current != null && to != null) {
+            if(to.getTroopCount() == 0){
                 descriptions.get(fromLocation).removeTroopCount(playerTroopCount);
-                // minus 2 to account for the 4 states of turns
-                descriptions.get(toLocation).setOccupiedBy(playerTurn - 2);
-                descriptions.get(toLocation).setTroopCount(playerTroopCount - enemyTroopCount);
-                if(playerTurn == 3){
+                descriptions.get(toLocation).setOccupiedBy(getRealPlayerTurn());
+                descriptions.get(toLocation).setTroopCount(playerTroopCount);
+                result = "Player " + (getRealPlayerTurn()) + " has won the battle perfectly!";
+                if(getRealPlayerTurn() == 1){
                     descriptions.get(toLocation).setColor("blue");
                 } else {
                     descriptions.get(toLocation).setColor("red");
                 }
-                System.out.println("Player " + (playerTurn - 2) + " won the battle.");
             } else {
-                //player loses
-                descriptions.get(fromLocation).removeTroopCount(playerTroopCount);
-                descriptions.get(toLocation).setTroopCount(enemyTroopCount - playerTroopCount);
-                System.out.println("Player " + (playerTurn - 2) + " lost the battle.");
+                int attacker = random.nextInt(11) + playerTroopCount;
+                int defence = random.nextInt(11) + to.getTroopCount() + 2; // Defence gets slight advantage
+                int enemyTroopCount = to.getTroopCount();
+                if ((attacker - defence) > 15) {
+                    //player has perfect win
+                    descriptions.get(fromLocation).removeTroopCount(playerTroopCount);
+                    descriptions.get(toLocation).setOccupiedBy(getRealPlayerTurn());
+                    descriptions.get(toLocation).setTroopCount(playerTroopCount);
+                    result = "Player " + (getRealPlayerTurn()) + " has won the battle perfectly!";
+                    if(getRealPlayerTurn() == 1){
+                        descriptions.get(toLocation).setColor("blue");
+                    } else {
+                        descriptions.get(toLocation).setColor("red");
+                    }
+                } else if (attacker - defence > 7) {
+                    //player wins
+                    descriptions.get(fromLocation).removeTroopCount(playerTroopCount);
+                    // minus 2 to account for the 4 states of turns
+                    descriptions.get(toLocation).setOccupiedBy(getRealPlayerTurn());
+                    descriptions.get(toLocation).setTroopCount(playerTroopCount - enemyTroopCount);
+                    result = "Player " + (getRealPlayerTurn()) + " has won the battle.";
+                    if(getRealPlayerTurn() == 1){
+                        descriptions.get(toLocation).setColor("blue");
+                    } else {
+                        descriptions.get(toLocation).setColor("red");
+                    }
+                } else if(attacker - defence >= 0){
+                    //player wins
+                    descriptions.get(fromLocation).removeTroopCount(playerTroopCount);
+                    // minus 2 to account for the 4 states of turns
+                    descriptions.get(toLocation).setOccupiedBy(getRealPlayerTurn());
+                    descriptions.get(toLocation).setTroopCount(playerTroopCount - (enemyTroopCount+(Math.round((float) (playerTroopCount - enemyTroopCount) /2))));
+                    result = "Player " + (getRealPlayerTurn()) + " has won the battle.";
+                    if(getRealPlayerTurn() == 1){
+                        descriptions.get(toLocation).setColor("blue");
+                    } else {
+                        descriptions.get(toLocation).setColor("red");
+                    }
+                } else if ((defence - attacker) > 15) {
+                    //player has perfect loss
+                    descriptions.get(fromLocation).removeTroopCount(playerTroopCount);
+                    result = ("Player " + (getRealPlayerTurn()) + " suffered a devastating loss.");
+                } else if (defence - attacker > 7) {
+                    //player loses
+                    descriptions.get(fromLocation).removeTroopCount(playerTroopCount);
+                    descriptions.get(toLocation).setTroopCount(enemyTroopCount - playerTroopCount);
+                    result = ("Player " + (getRealPlayerTurn()) + " lost the battle.");
+                } else if(defence - attacker >= 0){
+                    //player loses
+                    descriptions.get(fromLocation).removeTroopCount(playerTroopCount);
+                    descriptions.get(toLocation).setTroopCount(enemyTroopCount - (playerTroopCount+(Math.round((float) (enemyTroopCount - playerTroopCount) /2))));
+                    result = ("Player " + (getRealPlayerTurn()) + " lost the battle.");
+                } else {
+                    //player loses
+                    descriptions.get(fromLocation).removeTroopCount(playerTroopCount);
+                    descriptions.get(toLocation).setTroopCount(enemyTroopCount - playerTroopCount);
+                    result = ("Player " + (getRealPlayerTurn()) + " lost the battle.");
+                }
+                System.out.println(result);
+            }
+            if(to.getTroopCount() <= 0){
+                to.setTroopCount(1);
             }
         }
     }
@@ -462,7 +545,32 @@ public class GameLayout implements Serializable {
     }
 
     public void setSelectedLocation(String location) {
-        // TODO: if new location is a valid location to move/attack, then dont set as selected, call attack method.
+        if(location == null){
+            GameDriver.setPlayerLocation(this, getCapital(getRealPlayerTurn()));
+            location = GameDriver.getPlayerLocation(this, getRealPlayerTurn());
+        }
+        if(descriptions.get(location).getOccupiedBy() != getRealPlayerTurn()){
+            // loop through connections and see if can be moved to nearest connection controlled by player
+            for (String loc : descriptions.keySet()) {
+                if (descriptions.get(loc).getOccupiedBy() == getRealPlayerTurn()) {
+                    Iterator<String> iterator = getConnectionsIterator(location);
+                    while (iterator.hasNext()) {
+                        String connectedLocation = iterator.next();
+                        if (connectedLocation.equals(loc)) {
+                            descriptions.get(loc).select();
+                            return;
+                        }
+                    }
+                }
+            }
+            // loop through hashmap and set the first location that is occupied by the player
+            for (String loc : descriptions.keySet()) {
+                if (descriptions.get(loc).getOccupiedBy() == getRealPlayerTurn()) {
+                    descriptions.get(loc).select();
+                    return;
+                }
+            }
+        }
         if(descriptions.get(location).getSelected()){
             descriptions.get(location).deselect();
         } else {
@@ -520,9 +628,18 @@ public class GameLayout implements Serializable {
                 if(descriptions.get(name).getOccupiedBy() == getRealPlayerTurn()){
                     return true;
                 }
-                return true;
             }
         }
         return false;
+    }
+    public void setTroopsToPlace(int value) {
+        troopsToPlace = value;
+    }
+    public int getTroopsToPlace() {
+        return troopsToPlace;
+    }
+    public void placeTroops(String selectedLocation, int value) {
+        descriptions.get(selectedLocation).addTroopCount(value);
+        troopsToPlace -= value;
     }
 }

@@ -36,6 +36,9 @@ public class LocationDescription implements java.io.Serializable {
     public int getTroopSpawnRate() {
         return troopSpawnRate;
     }
+    public void addTroopSpawnRate(int troopSpawnRate) {
+        this.troopSpawnRate += troopSpawnRate;
+    }
 
     public int getTroopCount() {
         return troopCount;

@@ -1,5 +1,7 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,11 +10,12 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class GUI {
     private JFrame frame;
-    private JPanel panel;
+    private CustomPanel panel;
     private JButton button;
     private GameLayout gameLayout;
     private JLabel label;
@@ -22,6 +25,8 @@ public class GUI {
     private static final int BUTTON_SIZE = 100;
     private static final int WINDOW_WIDTH = 1000;
     private static final int WINDOW_HEIGHT = 700;
+    private static final int SMALL_WINDOW_WIDTH = 500;
+    private static final int SMALL_WINDOW_HEIGHT = 350;
     GridBagConstraints gbc = new GridBagConstraints();
     private JLabel playerTurnLabel;
     private Font largerFont;
@@ -85,6 +90,55 @@ public class GUI {
         return showTurn;
     }
 
+    public static void gameWinnerPanel(GameLayout gameLayout) {
+        JFrame newFrame = new JFrame("Game Over");
+        newFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(SMALL_WINDOW_WIDTH, SMALL_WINDOW_HEIGHT));
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.gridy = 0;
+        gbc.gridx = 0;
+        JLabel label = new JLabel("Player "+gameLayout.getGameWinner()+" Wins!");
+        panel.add(label, gbc);
+        JButton button = new JButton("Close");
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                newFrame.dispose();
+
+            }
+        });
+        gbc.gridy++;
+        panel.add(button, gbc);
+        newFrame.add(panel);
+        newFrame.pack();
+        newFrame.setVisible(true);
+    }
+
+    public static void createPathPanel(List<String> path) {
+        JFrame newFrame = new JFrame("Path");
+        newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(SMALL_WINDOW_WIDTH, SMALL_WINDOW_HEIGHT));
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.gridy = 0;
+        gbc.gridx = 0;
+        JLabel label = new JLabel("Path:");
+        panel.add(label, gbc);
+        for (int i = path.size() - 1; i >= 0; i--) {
+            gbc.gridy++;
+            JLabel locationLabel = new JLabel(path.get(i));
+            panel.add(locationLabel, gbc);
+        }
+        newFrame.add(panel);
+        newFrame.pack();
+        newFrame.setVisible(true);
+    }
+
     public void startNewGame()  {
     panel.removeAll();
     panel.revalidate();
@@ -92,12 +146,13 @@ public class GUI {
     System.out.println("Game started!");
     showTurn = true;
     try {
-        gameLayout.loadFromFile("src/nodeConnectionsSTRAIGHTMAP.txt", "src/locations.txt");
+        gameLayout.loadFromFile(/*"src/nodeConnectionsSTRAIGHTMAP.txt"*/"src/nodeConnections2.txt", "src/locations.txt");
     } catch (FileNotFoundException e) {
         e.printStackTrace();
     }
        createSortedLocations();
         GameDriver.newGame(gameLayout);
+        gameLayout.setTroopsToPlace(gameLayout.countAllNewTroops(gameLayout.getRealPlayerTurn()));
        GridBagConstraints gbc = new GridBagConstraints();
        gbc.insets = new Insets(10, 10, 10, 10);
        //paintPlayerTurn();
@@ -175,14 +230,6 @@ public class GUI {
         gameLayout.saveGameLayout(filename);
         System.out.println("Game state saved.");
     }
-    private void paintPlayerTurn() {
-        GridBagConstraints gbc = new GridBagConstraints();
-        playerTurnLabel = new JLabel("Player " + gameLayout.getPlayerTurn() + "'s turn");
-        playerTurnLabel.setFont(largerFont);
-        panel.add(playerTurnLabel, gbc);
-        gbc.gridy++;
-    }
-
     private void paintMap(GridBagConstraints gbc) {
         int x = 0;
         int y = 0;
@@ -192,7 +239,7 @@ public class GUI {
         if(locationNames == null){
             createSortedLocations();
         }
-        for (String locationName : gameLayout.getDescriptions().keySet() /*locationNames*/) {
+        for (String locationName : /*gameLayout.getDescriptions().keySet()*/ locationNames) {
 
             JButton button = createImageButton("src/Assets/" + gameLayout.getDescriptions().get(locationName).getColor() + "Node.png", BUTTON_SIZE, BUTTON_SIZE, gameLayout.getDescriptions().get(locationName));
             button.setLayout(new BorderLayout());
@@ -260,10 +307,6 @@ public class GUI {
             panel.repaint();
 
         }
-
-        // paint all valid connections with an image button using the ValidCOLORNode.png
-
-
     }
     private void paintGameButtons(){
         JButton saveButton = new JButton("Save Game");
@@ -282,6 +325,7 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 gameLayout.search(gameLayout.getSelectedLocation());
+                // TODO: FIX THIS QUICK
                 panel.removeAll();
                 GridBagConstraints gbc = new GridBagConstraints();
                 gbc.insets = new Insets(10, 10, 10, 10);
@@ -299,11 +343,21 @@ public class GUI {
         endTurn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gameLayout.nextTurn();
-                panel.removeAll();
-                GridBagConstraints gbc = new GridBagConstraints();
-                gbc.insets = new Insets(10, 10, 10, 10);
-                paintMap(gbc);
+                if(!gameLayout.checkGameWinner()){
+                    gameLayout.nextTurn();
+                    gameLayout.setTroopsToPlace(gameLayout.countAllNewTroops(gameLayout.getRealPlayerTurn()));
+                    panel.removeAll();
+                    if(gameLayout.getRealPlayerTurn() == 1){
+                        gameLayout.setSelectedLocation(GameDriver.getPlayer1Location());
+                    } else {
+                        gameLayout.setSelectedLocation(GameDriver.getPlayer2Location());
+                    }
+                    GridBagConstraints gbc = new GridBagConstraints();
+                    gbc.insets = new Insets(10, 10, 10, 10);
+                    update();
+                } else {
+                    gameWinnerPanel(gameLayout);
+                }
             }
         });
         JButton mainMenu = new JButton("Main Menu");
@@ -315,6 +369,86 @@ public class GUI {
                 GridBagConstraints gbc = new GridBagConstraints();
                 gbc.insets = new Insets(10, 10, 10, 10);
 
+            }
+        });
+        JButton showLocationDetails = new JButton("Show Location Details");
+        showLocationDetails.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showLocationDetails(gameLayout.getSelectedLocation());
+            }
+        });
+        JButton placeTroops = new JButton("Place Troops");
+        placeTroops.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(gameLayout.getPlayerTurn() == gameLayout.getRealPlayerTurn()){
+                    if(gameLayout.getTroopsToPlace() > 0) {
+                        placeTroops(gameLayout.getSelectedLocation());
+                    } else {
+                        JFrame newFrame = new JFrame("No More Troops");
+                        JPanel newPanel = new JPanel();
+                        newPanel.setPreferredSize(new Dimension(SMALL_WINDOW_WIDTH, SMALL_WINDOW_HEIGHT));
+                        newPanel.setLayout(new GridBagLayout());
+                        JLabel label = new JLabel("You have no more troops to place.");
+                        newPanel.add(label);
+                        JButton okButton = new JButton("OK");
+                        okButton.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                newFrame.dispose();
+                            }
+                        });
+                        GridBagConstraints gbc = new GridBagConstraints();
+                        gbc.gridx = 0;
+                        gbc.gridy = 1;
+                        newPanel.add(okButton, gbc);
+                        newFrame.add(newPanel);
+                        newFrame.pack();
+                        newFrame.setVisible(true);
+                    }
+                    panel.removeAll();
+                    GridBagConstraints gbc = new GridBagConstraints();
+                    gbc.insets = new Insets(10, 10, 10, 10);
+                    paintMap(gbc);
+                }
+                panel.removeAll();
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.insets = new Insets(10, 10, 10, 10);
+                paintMap(gbc);
+            }
+        });
+        JButton attack = new JButton("Move Troops / Attack");
+        attack.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                moveTroops();
+                panel.removeAll();
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.insets = new Insets(10, 10, 10, 10);
+                paintMap(gbc);
+            }
+        });
+        JButton forceWin = new JButton("Force Win");
+        forceWin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // loop through all locations and set to controlled by player 1 and color blue
+                for (String location : gameLayout.getDescriptions().keySet()) {
+                    gameLayout.getDescriptions().get(location).setOccupiedBy(1);
+                    gameLayout.getDescriptions().get(location).setColor("BLUE");
+                }
+                panel.removeAll();
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.insets = new Insets(10, 10, 10, 10);
+                paintMap(gbc);
+            }
+        });
+        JButton exitGame = new JButton("Exit Game");
+        exitGame.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
             }
         });
         GridBagConstraints gbc = new GridBagConstraints();
@@ -329,11 +463,152 @@ public class GUI {
         panel.add(endTurn, gbc);
         gbc.gridx = 4;
         panel.add(mainMenu, gbc);
+        gbc.gridx = 0;
+        // add a small gap between the buttons
+        gbc.gridy = 4;
+        panel.add(new JLabel(" "), gbc);
+        gbc.gridy = 5;
+        panel.add(showLocationDetails, gbc);
+        gbc.gridx = 1;
+        if(gameLayout.getPlayerTurn() <= 2){
+            panel.add(placeTroops, gbc);
+        } else {
+            panel.add(attack, gbc);
+        }
+        gbc.gridx = 2;
+        panel.add(forceWin, gbc);
+        gbc.gridx = 3;
+        panel.add(exitGame, gbc);
+        panel.updateButtons(buttons);
         panel.revalidate();
         panel.repaint();
     }
-    public Point getButtonLocation(JButton button) {
-        return button.getLocation();
+
+    private void moveTroops() {
+        JFrame frame = new JFrame("Move Troops");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(SMALL_WINDOW_WIDTH, SMALL_WINDOW_HEIGHT));
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        JLabel label = new JLabel("Move troops from " + gameLayout.getSelectedLocation());
+        panel.add(label, gbc);
+
+        gbc.gridy++;
+        JLabel label2 = new JLabel("To: ");
+        panel.add(label2, gbc);
+
+        gbc.gridy++;
+        JComboBox<String> comboBox = new JComboBox<>();
+        for (String connectedLocation : gameLayout.getConnections(gameLayout.getSelectedLocation())) {
+            comboBox.addItem(connectedLocation);
+        }
+        panel.add(comboBox, gbc);
+
+        gbc.gridy++;
+        JSlider slider = new JSlider(1, gameLayout.getDescriptions().get(gameLayout.getSelectedLocation()).getTroopCount());
+        JLabel sliderLabel = new JLabel("Troops: " + slider.getValue() + "/" + gameLayout.getDescriptions().get(gameLayout.getSelectedLocation()).getTroopCount());
+        slider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                sliderLabel.setText("Troops: " + slider.getValue() + "/" + gameLayout.getDescriptions().get(gameLayout.getSelectedLocation()).getTroopCount());
+            }
+        });
+        panel.add(sliderLabel, gbc);
+        gbc.gridy++;
+        panel.add(slider, gbc);
+
+        gbc.gridy++;
+        JButton moveTroopsButton = new JButton("Move Troops");
+        moveTroopsButton.setSize(100, 50);
+        moveTroopsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameLayout.moveTroopsToLocation(gameLayout.getSelectedLocation(), comboBox.getSelectedItem().toString(), slider.getValue());
+                frame.dispose();
+                update();
+            }
+        });
+        panel.add(moveTroopsButton, gbc);
+
+        frame.add(panel);
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+    private void placeTroops(String selectedLocation) {
+    JFrame frame = new JFrame("Place Troops");
+    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    JPanel panel = new JPanel();
+    panel.setPreferredSize(new Dimension(SMALL_WINDOW_WIDTH, SMALL_WINDOW_HEIGHT));
+    panel.setLayout(new GridBagLayout());
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(10, 10, 10, 10);
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+
+    JLabel label = new JLabel("Place troops in " + selectedLocation);
+    panel.add(label, gbc);
+
+    gbc.gridy++;
+    JSlider slider = new JSlider(0, gameLayout.getTroopsToPlace());
+    JLabel sliderLabel = new JLabel("Troops: " + slider.getValue() + "/" + gameLayout.getTroopsToPlace());
+    slider.addChangeListener(new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            sliderLabel.setText("Troops: " + slider.getValue() + "/" + gameLayout.getTroopsToPlace());
+        }
+    });
+    panel.add(sliderLabel, gbc);
+
+    gbc.gridy++;
+    panel.add(slider, gbc);
+
+    gbc.gridy++;
+    JButton placeTroopsButton = new JButton("Place Troops");
+    placeTroopsButton.setSize(100, 50);
+    placeTroopsButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            gameLayout.placeTroops(selectedLocation, slider.getValue());
+            frame.dispose();
+            update();
+        }
+    });
+    panel.add(placeTroopsButton, gbc);
+
+    frame.add(panel);
+    frame.pack();
+    frame.setVisible(true);
+}
+
+    private void showLocationDetails(String selectedLocation) {
+        LocationDescription location = gameLayout.getDescriptions().get(selectedLocation);
+        JFrame frame = new JFrame("Location Details");
+        // set frame size
+        //frame.setSize(800, 600);
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(SMALL_WINDOW_WIDTH, SMALL_WINDOW_HEIGHT));
+        panel.setLayout(new GridLayout(0, 1));
+        JLabel nameLabel = new JLabel("Name: " + location.getName());
+        JLabel troopCountLabel = new JLabel("Troop Count: " + location.getTroopCount());
+        JLabel occupiedByLabel = new JLabel("Occupied By: " + location.getOccupiedBy());
+        JLabel isCapitalLabel = new JLabel("Is Capital: " + location.isCapital());
+        JLabel colorLabel = new JLabel("Color: " + location.getColor());
+        JLabel troopSpawnRateLabel = new JLabel("Troop Spawn Rate: " + location.getTroopSpawnRate());
+        panel.add(nameLabel);
+        panel.add(troopCountLabel);
+        panel.add(occupiedByLabel);
+        panel.add(isCapitalLabel);
+        panel.add(colorLabel);
+        panel.add(troopSpawnRateLabel);
+        frame.add(panel);
+        frame.pack();
+        frame.setVisible(true);
     }
 
     public void update() {
